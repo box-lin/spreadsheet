@@ -12,16 +12,23 @@ namespace HW2UnitTests
     public class TestUtils
     {
         List<int> rdList;
+        List<int> sampleList1;
+    
+
+
         [SetUp]
         public void SetUp()
         {
             rdList = Utils.GenerateRandomList(0, 20000, 10000);
+
+            sampleList1 = new List<int> (){ 1, 1, 1, 2, 2, 3 };
+            
         }
 
 
         [Test]
         public void TestRandomListSize()
-        {   
+        {
             int size = rdList.Count;
             Assert.AreEqual(10000, size);
         }
@@ -34,7 +41,17 @@ namespace HW2UnitTests
             {
                 isRange = true;
             }
-            Assert.AreEqual(true, isRange);
+            Assert.That(isRange);
         }
+
+        [Test]
+        public void TestHashSetDistinct(List<int> rdList)
+        {
+            int numDistinct = Utils.HashSetDistinct(rdList);
+
+            Assert.AreEqual(3, sampleList1);
+        }
+
+
     }
 }

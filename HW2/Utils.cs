@@ -22,5 +22,10 @@ namespace HW2
             return rdList;
         }
 
+        public static int HashSetDistinct(List<int> rdList)
+        {
+            return 0;
+        }
+
     }
 }
