@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using HW2;
+using System.Linq;
 
 namespace HW2UnitTests
 {
@@ -19,11 +20,21 @@ namespace HW2UnitTests
 
 
         [Test]
-        public void TestRanDomList()
-        {
+        public void TestRandomListSize()
+        {   
             int size = rdList.Count;
             Assert.AreEqual(10000, size);
-            
+        }
+
+        [Test]
+        public void TestRandomListRange()
+        {
+            bool isRange = false;
+            if (rdList.Min() >= 0 && rdList.Max() <= 20000)
+            {
+                isRange = true;
+            }
+            Assert.AreEqual(true, isRange);
         }
     }
 }
