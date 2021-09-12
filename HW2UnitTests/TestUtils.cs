@@ -12,15 +12,11 @@ namespace HW2UnitTests
     public class TestUtils
     {
         List<int> rdList;
-        List<int> sampleList1;
-    
-
 
         [SetUp]
         public void SetUp()
         {
             rdList = Utils.GenerateRandomList(0, 20000, 10000);
-            sampleList1 = new List<int> (){ 1, 1, 1, 2, 2, 3 };
         }
 
 
@@ -30,6 +26,7 @@ namespace HW2UnitTests
             int size = rdList.Count;
             Assert.AreEqual(10000, size);
         }
+
 
         [Test]
         public void TestRandomListRange()
@@ -42,11 +39,30 @@ namespace HW2UnitTests
             Assert.That(isRange);
         }
 
-        [Test]
-        public void TestHashSetDistinct()
+
+        /// <summary>
+        /// To test some self-define list by define arry in TestCases and convert to List inside the test method.
+        /// Because the TestCase only support the compile time value, where "new" a list happens in the runtime.
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        [TestCase(new[] { 1 }, ExpectedResult = 1)]
+        [TestCase(new[] { 1, 2 }, ExpectedResult = 2)]
+        [TestCase(new[] { 1, 2, 1, 1, 1 }, ExpectedResult = 2)]
+        [TestCase(new[] { 0,0,0,0,0,0,0,0}, ExpectedResult = 1)]
+        public int TestHashSetDistinct_SampleLists(int [] array)
         {
-            int numDistinct = Utils.HashSetDistinct(sampleList1);
-            Assert.AreEqual(3, numDistinct);
+            List<int> rdList = array.ToList();
+            return Utils.HashSetDistinct(rdList);
+        }
+
+        [Test]
+        public void TestHashSetDistinct_RandomList()
+        {
+            //using the build-in Distinct for test purpose
+            int expectDistinct = rdList.Distinct().ToList().Count;
+            int actualDistinct = Utils.HashSetDistinct(rdList);
+            Assert.AreEqual(expectDistinct, actualDistinct);
         }
 
 
