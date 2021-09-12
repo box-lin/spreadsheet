@@ -20,9 +20,7 @@ namespace HW2UnitTests
         public void SetUp()
         {
             rdList = Utils.GenerateRandomList(0, 20000, 10000);
-
             sampleList1 = new List<int> (){ 1, 1, 1, 2, 2, 3 };
-            
         }
 
 
@@ -45,11 +43,10 @@ namespace HW2UnitTests
         }
 
         [Test]
-        public void TestHashSetDistinct(List<int> rdList)
+        public void TestHashSetDistinct()
         {
-            int numDistinct = Utils.HashSetDistinct(rdList);
-
-            Assert.AreEqual(3, sampleList1);
+            int numDistinct = Utils.HashSetDistinct(sampleList1);
+            Assert.AreEqual(3, numDistinct);
         }
 
 

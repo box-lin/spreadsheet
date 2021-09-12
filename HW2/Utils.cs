@@ -24,7 +24,11 @@ namespace HW2
 
         public static int HashSetDistinct(List<int> rdList)
         {
-            return 0;
+            HashSet<int> hash = new HashSet<int>();
+            foreach (int val in rdList){
+                hash.Add(val);
+            }
+            return hash.Count;
         }
 
     }
