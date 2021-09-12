@@ -13,7 +13,13 @@ namespace HW2
     {
         public static List<int> GenerateRandomList(int min, int max, int size)
         {
-            return new List<int> { 0 };
+            Random rd = new Random();
+            List<int> rdList = new List<int>();
+            for (int i = 0; i<size; i++)
+            {
+                rdList.Add(rd.Next(min, max+1)); //[min,max+1) = [min,max] based on integer min diff = 1
+            }
+            return rdList;
         }
 
     }
