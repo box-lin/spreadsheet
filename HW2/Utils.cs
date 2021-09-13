@@ -31,9 +31,32 @@ namespace HW2
             return hash.Count;
         }
 
+        /// <summary>
+        /// This should be a O(N^2) worst time compleixty and O(1) space. 
+        /// </summary>
+        /// <param name="rdList"></param>
+        /// <returns></returns>
         public static int ConstantSpaceDistinct(List<int> rdList)
         {
-            return 0;
+            if (rdList.Count < 2) return rdList.Count; //empty or 1 
+            
+            int res = rdList.Count;
+            for (int i = 0; i < rdList.Count-1; i++) //O(N) is a must in best,average,worst cases
+            {
+                for (int j = i+1; j < rdList.Count; j++) //O(N) happens in worst case "no duplicates"
+                {
+                    if(rdList[i] == rdList[j]) //O(1) Cosntant
+                    {
+                        //when we found a duplicate in j(fast pointer) we decrease the res by 1;
+                        //we also want to break and start i(slow pointer) next step because we 
+                        //sure that we will eventually encounter this duplicate and will keep the 
+                        //pattern that search for future duplicates
+                        res--;
+                        break;
+                    }
+                } 
+            }
+            return res;
         }
 
     }
