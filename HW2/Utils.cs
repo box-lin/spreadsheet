@@ -31,5 +31,10 @@ namespace HW2
             return hash.Count;
         }
 
+        public static int ConstantSpaceDistinct(List<int> rdList)
+        {
+            return 0;
+        }
+
     }
 }

@@ -12,6 +12,7 @@ namespace HW2UnitTests
     public class TestUtils
     {
         List<int> rdList;
+        
 
         [SetUp]
         public void SetUp()
@@ -65,6 +66,16 @@ namespace HW2UnitTests
             Assert.AreEqual(expectDistinct, actualDistinct);
         }
 
+
+        [TestCase(new[] { 1 }, ExpectedResult = 1)]
+        [TestCase(new[] { 1, 2 }, ExpectedResult = 2)]
+        [TestCase(new[] { 1, 2, 1, 1, 1 }, ExpectedResult = 2)]
+        [TestCase(new[] { 0, 0, 0, 0, 0, 0, 0, 0 }, ExpectedResult = 1)]
+        public int TestConstantSpaceDistinct_SampleLists(int [] array)
+        {
+            List<int> rdList = array.ToList();
+            return Utils.ConstantSpaceDistinct(rdList);
+        }
 
     }
 }
