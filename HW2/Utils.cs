@@ -8,7 +8,7 @@ namespace HW2
     using System.Collections.Generic;
 
     /// <summary>
-    /// This the class of the collection of methods.
+    /// This the class of the collection of static methods.
     /// </summary>
     public class Utils
     {
@@ -41,13 +41,14 @@ namespace HW2
             HashSet<int> hash = new HashSet<int>();
             foreach (int val in rdList)
             {
-                hash.Add(val);
+                hash.Add(val); // We know that build-in hashset will do its determination whether add or not the value by the value distinction.
             }
 
             return hash.Count;
         }
 
         /// <summary>
+        /// This is a method to calculate numbers of distinct value by constant space.
         /// This should be a O(N^2) worst time compleixty and O(1) space.
         /// </summary>
         /// <param name="rdList"> pass in a random list. </param>
@@ -59,7 +60,7 @@ namespace HW2
                 return rdList.Count; // empty or 1 size of list, just return list size.
             }
 
-            // About O(N*N*1) = O(N^2) runtime.
+            // About worstly O(N*N*1) = O(N^2) time complexity.
             int res = rdList.Count;
             for (int i = 0; i < rdList.Count - 1; i++)
             {// O(N) is a must in best,average,worst cases.
@@ -69,8 +70,7 @@ namespace HW2
                     {// O(1) Cosntant
                         /* When we found a duplicate in j(fast pointer) we decrease the res by 1;
                          * We want to break and start i(slow pointer) next step because we sure that we
-                         * will eventually encounter this duplicate again and will keep the pattern that
-                         * search for future duplicates.
+                         * will eventually encounter this duplicate again.
                          */
                         res--;
                         break;
@@ -79,6 +79,16 @@ namespace HW2
             }
 
             return res;
+        }
+
+        /// <summary>
+        /// This is a method to calculate numbers of distinct value by sorting technique.
+        /// </summary>
+        /// <param name="rdList">  pass in a random list. </param>
+        /// <returns> return a number of distinct value. </returns>
+        public static int SortGetDisdinct(List<int> rdList)
+        {
+            return 0;
         }
     }
 }

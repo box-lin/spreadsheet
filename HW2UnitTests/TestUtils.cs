@@ -110,5 +110,20 @@ namespace HW2UnitTests
             int actualDistinct = Utils.ConstantSpaceDistinct(this.rdList);
             Assert.AreEqual(this.expectDistinct, actualDistinct);
         }
+
+        /// <summary>
+        /// Test the correctness of Utils.SortGetDistinct by some self define list and expectedResults.
+        /// </summary>
+        /// <param name="array"> pass in an array. </param>
+        /// <returns> return a number of distinct value. </returns>
+        [TestCase(new[] { 1 }, ExpectedResult = 1)]
+        [TestCase(new[] { 1, 2 }, ExpectedResult = 2)]
+        [TestCase(new[] { 1, 2, 1, 1, 1 }, ExpectedResult = 2)]
+        [TestCase(new[] { 0, 0, 0, 0, 0, 0, 0, 0 }, ExpectedResult = 1)]
+        public int TestSortGetDistinct_SampleLists(int[] array)
+        {
+            List<int> rdList = array.ToList();
+            return Utils.SortGetDisdinct(rdList);
+        }
     }
 }
