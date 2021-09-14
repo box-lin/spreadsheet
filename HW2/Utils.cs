@@ -88,7 +88,19 @@ namespace HW2
         /// <returns> return a number of distinct value. </returns>
         public static int SortGetDisdinct(List<int> rdList)
         {
-            return 0;
+            // sort the list
+            rdList.Sort();
+            int res = rdList.Count;
+         
+            for(int i = 1; i < rdList.Count; i++)
+            {
+                if(rdList[i] == rdList[i - 1])
+                {
+                    res--;
+                }
+            }
+
+            return res;
         }
     }
 }
