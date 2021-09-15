@@ -19,7 +19,7 @@ namespace HW2
         /// <param name="max"> max boundary. </param>
         /// <param name="size"> size of the list. </param>
         /// <returns> return a int type random list. </returns>
-        public static List<int> GenerateRandomList(int min, int max, int size)
+        public static List<int> GetGenerateRandomList(int min, int max, int size)
         {
             Random rd = new Random();
             List<int> rdList = new List<int>();
@@ -36,7 +36,7 @@ namespace HW2
         /// </summary>
         /// <param name="rdList"> pass in a random list. </param>
         /// <returns> return a number of distinct value. </returns>
-        public static int HashSetDistinct(List<int> rdList)
+        public static int GetByHashSetDistinct(List<int> rdList)
         {
             HashSet<int> hash = new HashSet<int>();
             foreach (int val in rdList)
@@ -53,7 +53,7 @@ namespace HW2
         /// </summary>
         /// <param name="rdList"> pass in a random list. </param>
         /// <returns> return a number of distinct value. </returns>
-        public static int ConstantSpaceDistinct(List<int> rdList)
+        public static int GetByConstantSpaceDistinct(List<int> rdList)
         {
             if (rdList.Count < 2)
             {
@@ -86,7 +86,7 @@ namespace HW2
         /// </summary>
         /// <param name="rdList">  pass in a random list. </param>
         /// <returns> return a number of distinct value. </returns>
-        public static int SortGetDisdinct(List<int> rdList)
+        public static int GetBySortDisdinct(List<int> rdList)
         {
             // sort the list
             rdList.Sort();

@@ -27,7 +27,7 @@ namespace HW2UnitTests
         [SetUp]
         public void SetUp()
         {
-            this.rdList = Utils.GenerateRandomList(0, 20000, 10000);
+            this.rdList = Utils.GetGenerateRandomList(0, 20000, 10000);
 
             // Calculate the expect distinct number of random list by build-in Distinct().
             this.expectDistinct = this.rdList.Distinct().ToList().Count;
@@ -59,6 +59,7 @@ namespace HW2UnitTests
         }
 
         /// <summary>
+        /// Method to test the GetByHashSetDistinct from Utils class by some sample lists.
         /// To test some self-define list by define arry in TestCases and convert to List inside the test method.
         /// Because the TestCase only support the compile time value, where "new" a list happens in the runtime.
         /// </summary>
@@ -68,25 +69,25 @@ namespace HW2UnitTests
         [TestCase(new[] { 1, 2 }, ExpectedResult = 2)]
         [TestCase(new[] { 1, 2, 1, 1, 1 }, ExpectedResult = 2)]
         [TestCase(new[] { 0, 0, 0, 0, 0, 0, 0, 0 }, ExpectedResult = 1)]
-        public int TestHashSetDistinct_SampleLists(int[] array)
+        public int TestGetByHashSetDistinct_SampleLists(int[] array)
         {
             List<int> rdList = array.ToList();
-            return Utils.HashSetDistinct(rdList);
+            return Utils.GetByHashSetDistinct(rdList);
         }
 
         /// <summary>
-        /// Test the Utils.HashSetDistinct by a random list generated from Utils.GenerateRandomList;
+        /// Test the Utils.GetByHashSetDistinct by a random list generated from Utils.GetGenerateRandomList;
         /// The expect result calculated from the Distinct() build-in function.
         /// </summary>
         [Test]
-        public void TestHashSetDistinct_RandomList()
+        public void TestGetByHashSetDistinct_RandomList()
         {
-            int actualDistinct = Utils.HashSetDistinct(this.rdList);
+            int actualDistinct = Utils.GetByHashSetDistinct(this.rdList);
             Assert.AreEqual(this.expectDistinct, actualDistinct);
         }
 
         /// <summary>
-        /// Test the correctness of Utils.ConstantSpaceDistinct by some self define list and expectedResults.
+        /// Test the correctness of Utils.GetByConstantSpaceDistinct by some self define list and expectedResults.
         /// </summary>
         /// <param name="array"> pass in an array. </param>
         /// <returns> return a number of distinct value. </returns>
@@ -94,25 +95,25 @@ namespace HW2UnitTests
         [TestCase(new[] { 1, 2 }, ExpectedResult = 2)]
         [TestCase(new[] { 1, 2, 1, 1, 1 }, ExpectedResult = 2)]
         [TestCase(new[] { 0, 0, 0, 0, 0, 0, 0, 0 }, ExpectedResult = 1)]
-        public int TestConstantSpaceDistinct_SampleLists(int[] array)
+        public int TestGetByConstantSpaceDistinct_SampleLists(int[] array)
         {
             List<int> rdList = array.ToList();
-            return Utils.ConstantSpaceDistinct(rdList);
+            return Utils.GetByConstantSpaceDistinct(rdList);
         }
 
         /// <summary>
-        /// Test the Utils.ConstantSpaceDistinct by a random list generated from Utils.GenerateRandomList;
+        /// Test the Utils.GetByConstantSpaceDistinct by a random list generated from Utils.GetGenerateRandomList;
         /// The expect result calculated from the Distinct() build-in function.
         /// </summary>
         [Test]
-        public void TestConstantSpaceDistinct_RandomList()
+        public void TestGetByConstantSpaceDistinct_RandomList()
         {
-            int actualDistinct = Utils.ConstantSpaceDistinct(this.rdList);
+            int actualDistinct = Utils.GetByConstantSpaceDistinct(this.rdList);
             Assert.AreEqual(this.expectDistinct, actualDistinct);
         }
 
         /// <summary>
-        /// Test the correctness of Utils.SortGetDistinct by some self define list and expectedResults.
+        /// Test the correctness of Utils.GetSortDistinct by some self define list and expectedResults.
         /// </summary>
         /// <param name="array"> pass in an array. </param>
         /// <returns> return a number of distinct value. </returns>
@@ -120,21 +121,20 @@ namespace HW2UnitTests
         [TestCase(new[] { 1, 2 }, ExpectedResult = 2)]
         [TestCase(new[] { 1, 2, 1, 1, 1 }, ExpectedResult = 2)]
         [TestCase(new[] { 0, 0, 0, 0, 0, 0, 0, 0 }, ExpectedResult = 1)]
-        public int TestSortGetDistinct_SampleLists(int[] array)
+        public int TestGetSortDistinct_SampleLists(int[] array)
         {
             List<int> rdList = array.ToList();
-            return Utils.SortGetDisdinct(rdList);
+            return Utils.GetBySortDisdinct(rdList);
         }
 
-
         /// <summary>
-        /// Test the Utils.SortGetDistinct by a random list generated from Utils.GenerateRandomList;
+        /// Test the Utils.GetSortDistinct by a random list generated from Utils.GetGenerateRandomList;
         /// The expect result calculated from the Distinct() build-in function.
         /// </summary>
         [Test]
-        public void TestSortGetDistinct_RandomList()
+        public void TestGetSortDistinct_RandomList()
         {
-            int actualDistinct = Utils.SortGetDisdinct(this.rdList);
+            int actualDistinct = Utils.GetBySortDisdinct(this.rdList);
             Assert.AreEqual(this.expectDistinct, actualDistinct);
         }
     }
