@@ -91,15 +91,21 @@ namespace HW2
             // sort the list
             rdList.Sort();
             int res = rdList.Count;
-         
-            for(int i = 1; i < rdList.Count; i++)
+
+            // Handle list.count >= 2
+            /*
+             * For any E_i in rdList, each E_i <= E_i+1 <=> E_i-1 <= E_i then we see, each E_i-1 = E_i indicates one duplicates.
+             * By starting i from 1 to N (size of list), at worst suppose each E_i the same, we will get N-1 duplicates which satified our purpose.
+             */
+            for (int i = 1; i < rdList.Count; i++)
             {
-                if(rdList[i] == rdList[i - 1])
+                if (rdList[i] == rdList[i - 1])
                 {
                     res--;
                 }
             }
 
+            // if list.count < 2, for loop condition i inequality not satified because not valid for i = 1 < 1("list.Count") so just return the list.count.
             return res;
         }
     }

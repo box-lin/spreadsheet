@@ -125,5 +125,17 @@ namespace HW2UnitTests
             List<int> rdList = array.ToList();
             return Utils.SortGetDisdinct(rdList);
         }
+
+
+        /// <summary>
+        /// Test the Utils.SortGetDistinct by a random list generated from Utils.GenerateRandomList;
+        /// The expect result calculated from the Distinct() build-in function.
+        /// </summary>
+        [Test]
+        public void TestSortGetDistinct_RandomList()
+        {
+            int actualDistinct = Utils.SortGetDisdinct(this.rdList);
+            Assert.AreEqual(this.expectDistinct, actualDistinct);
+        }
     }
 }
