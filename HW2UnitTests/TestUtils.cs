@@ -1,5 +1,5 @@
-﻿// <copyright file="TestUtils.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+﻿// <copyright file="TestUtils.cs" company="Boxiang Lin - WSU 011601661">
+// Copyright (c) Boxiang Lin - WSU 011601661. All rights reserved.
 // </copyright>
 
 namespace HW2UnitTests
@@ -15,10 +15,14 @@ namespace HW2UnitTests
     [TestFixture]
     public class TestUtils
     {
-        // Class member random List variable to be used in the test cases.
+        /// <summary>
+        /// Class member random List variable to be used in the test cases.
+        /// </summary>
         private List<int> rdList;
 
-        // Class variable to hold the expect distinct number from random list.
+        /// <summary>
+        /// Class variable to hold the expect distinct number from random list.
+        /// </summary>
         private int expectDistinct;
 
         /// <summary>
