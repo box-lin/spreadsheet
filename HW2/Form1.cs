@@ -51,10 +51,12 @@ namespace HW2
             StringBuilder output = new StringBuilder();
 
             output.AppendLine("1. HashSet Method: " + distinctByHashSet + " of unique numbers. ");
-            output.AppendLine("It takes O(N) time complexity, where N = size of the random list, to visit all values in the random list. During each " +
+            output.AppendLine("(Method Analysis): It takes O(N) time complexity, where N = size of the random list, to visit all values in the random list. During each " +
                               "visit, I use the build-in hashset add method to add each value into the HashSet data structure, the build-in add will " +
                               "determine if the value is already present in the set or not and add if not present before, this build-in add time complexity " +
-                              "is O(1). Hence O(N*1) = O(N) runtime complexity and O(M) space complexity, where M has 0<=M <= N possibilities.");
+                              "is O(1). Hence this method takes O(N*1) = O(N) time complexity and O(M) space complexity, where M has 0(zero) <=M <= N possibilities.");
+            output.AppendLine("(Method Idea): The C# build-in HashSet has the characteristic of storing distinct elements in the set, so we transfer element " +
+                              "from random list to hashset will filter out the duplicate ones, ended up the size of hashset is the correct number of distincts. ");
             output.AppendLine();
             output.AppendLine("2. O(1) Storage Method: " + distinctByOneSpace + " of unique numbers. ");
             output.AppendLine();
