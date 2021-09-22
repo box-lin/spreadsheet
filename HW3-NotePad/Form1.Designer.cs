@@ -38,12 +38,15 @@ namespace HW3_NotePad
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox
             // 
             this.textBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox.Font = new System.Drawing.Font("Sitka Small", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox.ForeColor = System.Drawing.SystemColors.WindowText;
             this.textBox.Location = new System.Drawing.Point(0, 25);
             this.textBox.Multiline = true;
             this.textBox.Name = "textBox";
@@ -78,6 +81,7 @@ namespace HW3_NotePad
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             this.fileToolStripMenuItem.Text = "Load From File";
+            this.fileToolStripMenuItem.Click += new System.EventHandler(this.FileToolStripMenuItem_Click);
             // 
             // loadFibnacciNumberfirst50ToolStripMenuItem
             // 
@@ -102,6 +106,10 @@ namespace HW3_NotePad
             this.saveToFileToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             this.saveToFileToolStripMenuItem.Text = "Save to File...";
             this.saveToFileToolStripMenuItem.Click += new System.EventHandler(this.SaveToFileToolStripMenuItem_Click);
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.FileName = "openFileDialog1";
             // 
             // Form1
             // 
@@ -131,6 +139,7 @@ namespace HW3_NotePad
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem saveToFileToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }
 

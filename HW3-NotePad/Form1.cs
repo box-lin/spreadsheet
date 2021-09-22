@@ -56,5 +56,32 @@ namespace HW3_NotePad
                 MessageBox.Show("No input contents received", "Warning:", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        /// <summary>
+        /// Load the file.
+        /// </summary>
+        /// <param name="sender"> Object. </param>
+        /// <param name="e"> Event. </param>
+        private void FileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.openFileDialog.Filter = "Plain Text File(*.txt)|*.txt";
+            if (this.openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string path = this.openFileDialog.FileName;
+                StreamReader sr = new StreamReader(path);
+                this.LoadText(sr);
+                sr.Close();
+            }
+        }
+
+        /// <summary>
+        /// Read text from a file and put the contents into the textBox.
+        /// </summary>
+        /// <param name="sr"> TextReader object. </param>
+        private void LoadText(TextReader sr)
+        {
+            this.textBox.Text = sr.ReadToEnd();
+        }
+
     }
 }
