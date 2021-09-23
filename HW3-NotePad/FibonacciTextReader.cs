@@ -63,17 +63,19 @@ namespace HW3_NotePad
                 // We set the position 1 = 0 and position 2 = 1;
                 BigInteger first = 0, second = 1;
 
-                // if input is 1 then return res = 0 else res 1;
+                // if input is 1 then return res = 0 else res 1 (res will be change in loop so this handles when n = 1 and 2;
                 BigInteger res = n == 1 ? first : second;
 
-                // Then position begins 2, res = first + end. So when i reach n - 1, the first + second = n position value;
+                // Position that are > 2, will be determine from this loop.
+                // We want res = first + second (sum of prev two). So we must set bounday i to be at most n-1. res calculated at
+                // n-1 will be the nth value because where the second has been a value of n-1 in prev iteration.
                 for (BigInteger i = 2; i < n; i++)
                 {
-                    //res 
                     res = first + second;
                     first = second;
                     second = res;
                 }
+
                 return res;
             }
         }
