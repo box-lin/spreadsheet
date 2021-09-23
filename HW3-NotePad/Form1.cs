@@ -82,6 +82,5 @@ namespace HW3_NotePad
         {
             this.textBox.Text = sr.ReadToEnd();
         }
-
     }
 }
