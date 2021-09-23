@@ -18,7 +18,9 @@ namespace HW3_NotePad
     /// </summary>
     public class FibonacciTextReader : TextReader
     {
-        private int maxLines;
+        private int maxLine;
+        private int curLine;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FibonacciTextReader"/> class.
@@ -26,25 +28,48 @@ namespace HW3_NotePad
         /// </summary>
         public FibonacciTextReader()
         {
-            this.maxLines = 0;
+            this.maxLine = 0;
+            this.curLine = 1;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FibonacciTextReader"/> class.
         /// </summary>
-        /// <param name="maxLines"> Max number of line for fibonacci numbers. </param>
-        public FibonacciTextReader(int maxLines)
+        /// <param name="maxLine"> Max number of line for fibonacci numbers. </param>
+        public FibonacciTextReader(int maxLine)
         {
-            this.maxLines = maxLines;
+            this.maxLine = maxLine;
+            this.curLine = 1;
         }
 
         /// <summary>
-        /// Override the ReadLine method in TextReader.
+        /// Override the ReadLine method inherited from TextReader.
         /// </summary>
         /// <returns> A line of Fibonacci number. </returns>
         public override string ReadLine()
         {
-            return "dsad";
+            if (this.curLine > this.maxLine)
+            {
+                return null;
+            }
+
+            return this.curLine.ToString() + ": " + this.Fib(this.curLine).ToString();
+        }
+
+        /// <summary>
+        /// Override the ReadToEnd method inherited from TextReader.
+        /// </summary>
+        /// <returns> string set of output. </returns>
+        public override string ReadToEnd()
+        {
+            StringBuilder output = new StringBuilder();
+            while (this.curLine <= this.maxLine)
+            {
+                output.Append(this.ReadLine());
+                this.curLine++;
+            }
+
+            return output.ToString();
         }
 
         /// <summary>
