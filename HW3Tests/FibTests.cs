@@ -30,13 +30,24 @@ namespace HW3Tests
         /// </summary>
         /// <param name="n"> nth position of fibonacci. </param>
         /// <returns> nth value of fibonacci calculated by Fib in fbReader. </returns>
-        [TestCase(1, ExpectedResult = 0)]
-        [TestCase(2, ExpectedResult = 1)]
-        [TestCase(4, ExpectedResult = 2)]
-        [TestCase(15, ExpectedResult = 377)]
-        public BigInteger TestFibPositiveNthValue(int n)
+        [Test]
+        public void TestFibPositiveNthValue()
         {
-            return this.fbReader.Fib(n);
+            
+            BigInteger a = 0;
+            Assert.AreEqual(a, this.fbReader.Fib(1));
+
+            BigInteger b = 1;
+            Assert.AreEqual(b, this.fbReader.Fib(2));
+
+            BigInteger e = 1;
+            Assert.AreEqual(e, this.fbReader.Fib(3));
+
+            BigInteger c = 377;
+            Assert.AreEqual(c, this.fbReader.Fib(15));
+            
         }
+
+
     }
 }

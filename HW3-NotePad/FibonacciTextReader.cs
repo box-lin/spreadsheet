@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -53,7 +54,28 @@ namespace HW3_NotePad
         /// <returns> the fibonacci value at nth number. </returns>
         public BigInteger Fib(BigInteger n)
         {
-            return 1;
+            if (n <= 0)
+            {
+                throw new ArgumentException("nth position of fibonacci number must > 0");
+            }
+            else
+            {
+                // We set the position 1 = 0 and position 2 = 1;
+                BigInteger first = 0, second = 1;
+
+                // if input is 1 then return res = 0 else res 1;
+                BigInteger res = n == 1 ? first : second;
+
+                // Then position begins 2, res = first + end. So when i reach n - 1, the first + second = n position value;
+                for (BigInteger i = 2; i < n; i++)
+                {
+                    //res 
+                    res = first + second;
+                    first = second;
+                    second = res;
+                }
+                return res;
+            }
         }
     }
 }
