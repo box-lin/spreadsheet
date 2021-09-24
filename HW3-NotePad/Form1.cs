@@ -82,5 +82,25 @@ namespace HW3_NotePad
         {
             this.textBox.Text = sr.ReadToEnd();
         }
+
+        /// <summary>
+        /// This is method of action handler load 1-50th fibonacci numbers.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void LoadFibnacciNumberfirst50ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.LoadText(new FibonacciTextReader(50));
+        }
+
+        /// <summary>
+        /// This is method of action handler load 1-100th fibonacci numbers.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void LoadFibonacciNumberfirst100ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.LoadText(new FibonacciTextReader(100));
+        }
     }
 }

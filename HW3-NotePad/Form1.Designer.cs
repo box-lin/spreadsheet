@@ -88,12 +88,14 @@ namespace HW3_NotePad
             this.loadFibnacciNumberfirst50ToolStripMenuItem.Name = "loadFibnacciNumberfirst50ToolStripMenuItem";
             this.loadFibnacciNumberfirst50ToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             this.loadFibnacciNumberfirst50ToolStripMenuItem.Text = "Load Fibonacci Number (first 50)";
+            this.loadFibnacciNumberfirst50ToolStripMenuItem.Click += new System.EventHandler(this.LoadFibnacciNumberfirst50ToolStripMenuItem_Click);
             // 
             // loadFibonacciNumberfirst100ToolStripMenuItem
             // 
             this.loadFibonacciNumberfirst100ToolStripMenuItem.Name = "loadFibonacciNumberfirst100ToolStripMenuItem";
             this.loadFibonacciNumberfirst100ToolStripMenuItem.Size = new System.Drawing.Size(274, 22);
             this.loadFibonacciNumberfirst100ToolStripMenuItem.Text = "Load Fibonacci Number (first 100)";
+            this.loadFibonacciNumberfirst100ToolStripMenuItem.Click += new System.EventHandler(this.LoadFibonacciNumberfirst100ToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -120,7 +122,7 @@ namespace HW3_NotePad
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Boxiang Lin - 011601661";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);

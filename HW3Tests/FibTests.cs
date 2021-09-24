@@ -62,7 +62,7 @@ namespace HW3Tests
         }
 
         /// <summary>
-        /// This method test the invalid position (n <= 0) should throw arugment exception.
+        /// This method test the invalid position (n. < 1) should throw arugment exception.
         /// </summary>
         [Test]
         public void TestFibInvalidPositions()

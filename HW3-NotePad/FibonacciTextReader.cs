@@ -65,10 +65,12 @@ namespace HW3_NotePad
             StringBuilder output = new StringBuilder();
             while (this.curLine <= this.maxLine)
             {
-                output.Append(this.ReadLine());
+                output.AppendLine(this.ReadLine());
                 this.curLine++;
             }
 
+            // rest counter.
+            this.curLine = 1;
             return output.ToString();
         }
 
