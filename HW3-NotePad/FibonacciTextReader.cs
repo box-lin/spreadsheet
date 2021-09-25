@@ -10,7 +10,7 @@ using System.Text;
 namespace HW3_NotePad
 {
     /// <summary>
-    /// Fibonacci Class.
+    /// Fibonacci Class that calculate the fibonacci number and override the read methods that inherited from TextReader.
     /// </summary>
     public class FibonacciTextReader : TextReader
     {
@@ -77,6 +77,7 @@ namespace HW3_NotePad
         /// <returns> the fibonacci value at nth number. </returns>
         public BigInteger Fib(BigInteger n)
         {
+            // We specify that we dont want position < 1.
             if (n <= 0)
             {
                 throw new ArgumentException("nth position of fibonacci number must > 0");

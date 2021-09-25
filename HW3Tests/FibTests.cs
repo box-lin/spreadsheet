@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace HW3Tests
 {
     /// <summary>
-    /// Fib Method in FibonacciTextReader Test Class.
+    /// FibTests class that test Fib Method in FibonacciTextReader.
     /// </summary>
     [TestFixture]
     public class FibTests
@@ -18,7 +18,7 @@ namespace HW3Tests
         private FibonacciTextReader fbReader;
 
         /// <summary>
-        /// random list instantiate when run the test.
+        /// Instantiated the fbReader object.
         /// </summary>
         [SetUp]
         public void SetUp()
@@ -27,7 +27,7 @@ namespace HW3Tests
         }
 
         /// <summary>
-        /// This method valid non-zero positive Nth position fibonacci number (Within 32 bits).
+        /// This method test non-zero positive Nth position fibonacci number (Within 32 bits).
         /// </summary>
         /// <param name="n"> nth position of fibonacci. </param>
         [Test]
