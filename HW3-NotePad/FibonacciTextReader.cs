@@ -3,13 +3,9 @@
 // </copyright>
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace HW3_NotePad
 {
@@ -18,9 +14,9 @@ namespace HW3_NotePad
     /// </summary>
     public class FibonacciTextReader : TextReader
     {
-        private int maxLine;
-        private int curLine;
-
+        // To support large than 32 bits Integer position(lines).
+        private BigInteger maxLine;
+        private BigInteger curLine;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FibonacciTextReader"/> class.
@@ -36,7 +32,7 @@ namespace HW3_NotePad
         /// Initializes a new instance of the <see cref="FibonacciTextReader"/> class.
         /// </summary>
         /// <param name="maxLine"> Max number of line for fibonacci numbers. </param>
-        public FibonacciTextReader(int maxLine)
+        public FibonacciTextReader(BigInteger maxLine)
         {
             this.maxLine = maxLine;
             this.curLine = 1;

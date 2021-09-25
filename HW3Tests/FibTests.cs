@@ -47,7 +47,6 @@ namespace HW3Tests
             Assert.AreEqual(vFifteen, this.fbReader.Fib(15));
         }
 
-
         /// <summary>
         /// This method test the BigInteger output that are larger than 32 bits.
         /// </summary>
