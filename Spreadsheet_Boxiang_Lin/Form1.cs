@@ -33,6 +33,21 @@ namespace Spreadsheet_Boxiang_Lin
         {
             this.ResetDataGridView();
             this.InitColumns('A', 'Z');
+            this.InitRows(1, 50);
+        }
+
+        /// <summary>
+        /// Intial the rows in range [x,y].
+        /// </summary>
+        /// <param name="x"> The start number of row. </param>
+        /// <param name="y"> The end number of row. </param>
+        private void InitRows(int x, int y)
+        {
+            for (int i = x; i <= y; i++)
+            {
+                this.dataGridView1.Rows.Add();
+                this.dataGridView1.Rows[i - 1].HeaderCell.Value = i.ToString();
+            }
         }
 
         /// <summary>
