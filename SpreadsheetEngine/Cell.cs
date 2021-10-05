@@ -40,7 +40,7 @@ namespace CptS321
         }
 
         /// <inheritdoc/>
-        public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         /// <summary>
         /// Gets the rowIndex.
@@ -76,14 +76,19 @@ namespace CptS321
 
             set
             {
-                if (this.text != value)
+                if (this.text == value)
                 {
-                    this.text = value;
-                    this.PropertyChanged(this, new PropertyChangedEventArgs("Text"));
+                    return;
                 }
+
+                this.text = value;
+                this.PropertyChanged(this, new PropertyChangedEventArgs("Text"));
             }
         }
 
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
         public string Value
         {
             get

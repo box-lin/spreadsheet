@@ -14,6 +14,9 @@ using System.Windows.Forms;
 
 namespace Spreadsheet_Boxiang_Lin
 {
+    /// <summary>
+    /// GUI Form Class.
+    /// </summary>
     public partial class Form1 : Form
     {
         /// <summary>
