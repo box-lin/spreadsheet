@@ -67,7 +67,7 @@ namespace SpreadsheetEngine
                 for (int j = 0; j < col; j++)
                 {
                     char colIndex = (char)('A' + j);
-                    this.Cells[i, j] = new TheCell(i + 1, colIndex);
+                    this.Cells[i, j] = new TheCell(i, colIndex);
                     this.Cells[i, j].PropertyChanged += this.CellPropertyChanged;
                 }
             }
