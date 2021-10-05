@@ -10,7 +10,6 @@ using NUnit.Framework;
 
 namespace TestSpreadsheetEngine
 {
-
     /// <summary>
     /// This Class to Test the properties of the Cell.
     /// </summary>

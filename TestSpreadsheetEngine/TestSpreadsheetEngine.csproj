@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestCell.cs" />
+    <Compile Include="TestSpreadsheet.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
