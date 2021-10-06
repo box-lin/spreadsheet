@@ -33,6 +33,11 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// CellPropertyChanged Event Handler.
+        /// </summary>
+        public event PropertyChangedEventHandler CellPropertyChanged = delegate { };
+
+        /// <summary>
         /// Gets the columnCount.
         /// </summary>
         public int ColumnCount
@@ -67,21 +72,46 @@ namespace SpreadsheetEngine
                 for (int j = 0; j < col; j++)
                 {
                     char colIndex = (char)('A' + j);
-                    this.Cells[i, j] = new TheCell(i, colIndex);
-                    this.Cells[i, j].PropertyChanged += this.CellPropertyChanged;
+                    this.Cells[i, j] = new TheCell(i + 1, colIndex);
+                    this.Cells[i, j].PropertyChanged += this.PropertyChanged;
                 }
             }
         }
 
         /// <summary>
-        /// Handline the event if Cell.text changed.
+        /// Handler the event if Cell.text changed.
         /// </summary>
         /// <param name="sender"> Object. </param>
         /// <param name="e"> Event. </param>
-        private void CellPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Text")
             {
+                TheCell curCell = (TheCell)sender;
+                if (curCell.Text[0] == '=')
+                {
+                    // The inputCellName assuming [A~Z][Digits] = [Col][Row].
+                    string inputCellName = curCell.Text.Substring(1);
+
+                    int col = (int)inputCellName[0] - 'A';
+
+                    // the rowindex start at 1. So row = rowIndex - 1.
+                    int row = int.Parse(inputCellName.Substring(1)) - 1;
+
+                    Cell target = this.GetCell(row, col);
+
+                    // Frame of logic, still need further implementations.
+                    if (target != null)
+                    {
+                        curCell.Text = target.Text;
+                        this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
+                    }
+                    else
+                    {
+                        curCell.Text = "null";
+                        this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
+                    }
+                }
             }
         }
 
