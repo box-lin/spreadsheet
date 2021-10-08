@@ -56,7 +56,7 @@ namespace CptS321
         /// <summary>
         /// Gets the columnIndex.
         /// </summary>
-        public int ColumnIndex
+        public char ColumnIndex
         {
             get
             {

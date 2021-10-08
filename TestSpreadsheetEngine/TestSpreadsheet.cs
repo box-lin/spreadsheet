@@ -5,8 +5,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using NUnit.Framework;
 using CptS321;
+using NUnit.Framework;
 using SpreadsheetEngine;
 
 namespace TestSpreadsheetEngine
@@ -38,10 +38,10 @@ namespace TestSpreadsheetEngine
         [Test]
         public void TestCellsInitRowIndex()
         {
-            Assert.AreEqual(1, this.ss.Cells[0, 25].RowIndex);
-            Assert.AreEqual(2, this.ss.Cells[1, 25].RowIndex);
-            Assert.AreEqual(5, this.ss.Cells[4, 20].RowIndex);
-            Assert.AreEqual(48, this.ss.Cells[47, 25].RowIndex);
+            Assert.AreEqual(0, this.ss.Cells[0, 25].RowIndex);
+            Assert.AreEqual(1, this.ss.Cells[1, 25].RowIndex);
+            Assert.AreEqual(4, this.ss.Cells[4, 20].RowIndex);
+            Assert.AreEqual(47, this.ss.Cells[47, 25].RowIndex);
         }
 
         /// <summary>

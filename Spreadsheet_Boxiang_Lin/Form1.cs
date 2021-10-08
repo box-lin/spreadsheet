@@ -3,14 +3,9 @@
 // </copyright>
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using CptS321;
 using SpreadsheetEngine;
 
 namespace Spreadsheet_Boxiang_Lin
@@ -20,15 +15,16 @@ namespace Spreadsheet_Boxiang_Lin
     /// </summary>
     public partial class Form1 : Form
     {
-
         private Spreadsheet spreadsheet;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Form1"/> class.
         /// </summary>
         public Form1()
         {
             this.InitializeComponent();
-            spreadsheet = new Spreadsheet(50, 26);
+            this.spreadsheet = new Spreadsheet(50, 26);
+            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
         }
 
         /// <summary>
@@ -41,24 +37,14 @@ namespace Spreadsheet_Boxiang_Lin
             this.ResetDataGridView();
             this.InitColumns('A', 'Z');
             this.InitRows(1, 50);
-            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
         }
 
         /// <summary>
-        /// CellProperty Event.
+        /// Intial the rows in range [x,y].
         /// </summary>
-        /// <param name="sender"> Object. </param>
-        /// <param name="e"> Event. </param>
-        private void OnCellPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-
-        }
-            /// <summary>
-            /// Intial the rows in range [x,y].
-            /// </summary>
-            /// <param name="x"> The start number of row. </param>
-            /// <param name="y"> The end number of row. </param>
-            private void InitRows(int x, int y)
+        /// <param name="x"> The start number of row. </param>
+        /// <param name="y"> The end number of row. </param>
+        private void InitRows(int x, int y)
         {
             for (int i = x; i <= y; i++)
             {
@@ -89,5 +75,6 @@ namespace Spreadsheet_Boxiang_Lin
             this.dataGridView1.CancelEdit();
             this.dataGridView1.Columns.Clear();
         }
+
     }
 }

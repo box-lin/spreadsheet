@@ -72,7 +72,7 @@ namespace SpreadsheetEngine
                 for (int j = 0; j < col; j++)
                 {
                     char colIndex = (char)('A' + j);
-                    this.Cells[i, j] = new TheCell(i + 1, colIndex);
+                    this.Cells[i, j] = new TheCell(i, colIndex);
                     this.Cells[i, j].PropertyChanged += this.PropertyChanged;
                 }
             }
@@ -88,6 +88,8 @@ namespace SpreadsheetEngine
             if (e.PropertyName == "Text")
             {
                 TheCell curCell = (TheCell)sender;
+
+                // For formula.
                 if (curCell.Text[0] == '=')
                 {
                     // The inputCellName assuming [A~Z][Digits] = [Col][Row].
@@ -95,22 +97,28 @@ namespace SpreadsheetEngine
 
                     int col = (int)inputCellName[0] - 'A';
 
-                    // the rowindex start at 1. So row = rowIndex - 1.
-                    int row = int.Parse(inputCellName.Substring(1)) - 1;
+                    // the rowindex start at 0.
+                    int row = int.Parse(inputCellName.Substring(1));
 
                     Cell target = this.GetCell(row, col);
 
-                    // Frame of logic, still need further implementations.
+                    // if target cell exsited copy its text.
                     if (target != null)
                     {
-                        curCell.Text = target.Text;
+                        curCell.SetValue(target.Text);
                         this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
                     }
                     else
                     {
-                        curCell.Text = "null";
+                        curCell.SetValue("null");
                         this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
                     }
+                }
+                else
+                {
+                    // For just text.
+                    curCell.SetValue(curCell.Text);
+                    this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
                 }
             }
         }
@@ -123,7 +131,7 @@ namespace SpreadsheetEngine
         /// <returns> Specific Cell. </returns>
         public Cell GetCell(int row, int col)
         {
-            return row >= 0 && row <= this.rowCount && col >= 0 && col <= this.rowCount ? this.Cells[row, col] : null;
+            return row >= 0 && row < this.rowCount && col >= 0 && col < this.rowCount ? this.Cells[row, col] : null;
         }
 
         /// <summary>
@@ -139,6 +147,15 @@ namespace SpreadsheetEngine
             public TheCell(int rowIndex, char colIndex)
                 : base(rowIndex, colIndex)
             {
+            }
+
+            /// <summary>
+            /// Set the value.
+            /// </summary>
+            /// <param name="value"> string value. </param>
+            public void SetValue(string value)
+            {
+                this.value = value;
             }
         }
 

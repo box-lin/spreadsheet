@@ -25,7 +25,6 @@ namespace TestSpreadsheetEngine
         public TestCell()
         {
             this.cell = new TheCell(3, 'A');
-            this.cell.PropertyChanged += this.TestPropertyChangedEventArgs;
             this.cell.Text = "Hello";
         }
 
@@ -48,17 +47,8 @@ namespace TestSpreadsheetEngine
         public void TestCellProtectedMemberVariablesAndPropertyField()
         {
             Assert.AreEqual("Hello", this.cell.Text);
-        }
-
-        /// <summary>
-        /// Test the PropertyChangedEvent.
-        /// </summary>
-        /// <param name="sender"> Object. </param>
-        /// <param name="e"> Event. </param>
-        [Test]
-        public void TestPropertyChangedEventArgs(object sender, PropertyChangedEventArgs e)
-        {
-            Assert.AreEqual("Text", e.PropertyName);
+            Assert.AreEqual('A', this.cell.ColumnIndex);
+            Assert.AreEqual(3, this.cell.RowIndex);
         }
 
         /// <summary>

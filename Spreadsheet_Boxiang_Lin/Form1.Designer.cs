@@ -33,6 +33,7 @@ namespace Spreadsheet_Boxiang_Lin
             this.A = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.B = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.C = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -45,10 +46,11 @@ namespace Spreadsheet_Boxiang_Lin
             this.A,
             this.B,
             this.C});
-            this.dataGridView1.Location = new System.Drawing.Point(12, 12);
+            this.dataGridView1.Location = new System.Drawing.Point(13, 50);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(776, 426);
+            this.dataGridView1.Size = new System.Drawing.Size(1245, 647);
             this.dataGridView1.TabIndex = 0;
             // 
             // A
@@ -66,12 +68,24 @@ namespace Spreadsheet_Boxiang_Lin
             this.C.HeaderText = "C";
             this.C.Name = "C";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(504, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(226, 31);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "DEMO CLICK HERE`";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1260, 701);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.dataGridView1);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -86,6 +100,7 @@ namespace Spreadsheet_Boxiang_Lin
         private System.Windows.Forms.DataGridViewTextBoxColumn A;
         private System.Windows.Forms.DataGridViewTextBoxColumn B;
         private System.Windows.Forms.DataGridViewTextBoxColumn C;
+        private System.Windows.Forms.Button button1;
     }
 }
 
