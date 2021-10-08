@@ -73,6 +73,8 @@ namespace SpreadsheetEngine
                 {
                     char colIndex = (char)('A' + j);
                     this.Cells[i, j] = new TheCell(i, colIndex);
+
+                    // The spreadsheet class has to subscribe to all the PropertyChanged events
                     this.Cells[i, j].PropertyChanged += this.PropertyChanged;
                 }
             }
@@ -92,27 +94,7 @@ namespace SpreadsheetEngine
                 // For formula.
                 if (curCell.Text[0] == '=')
                 {
-                    // The inputCellName assuming [A~Z][Digits] = [Col][Row].
-                    string inputCellName = curCell.Text.Substring(1);
-
-                    int col = (int)inputCellName[0] - 'A';
-
-                    // the rowindex start at 0.
-                    int row = int.Parse(inputCellName.Substring(1));
-
-                    Cell target = this.GetCell(row, col);
-
-                    // if target cell exsited copy its text.
-                    if (target != null)
-                    {
-                        curCell.SetValue(target.Text);
-                        this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
-                    }
-                    else
-                    {
-                        curCell.SetValue("null");
-                        this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
-                    }
+                    this.ApplyFormula(curCell);
                 }
                 else
                 {
@@ -120,6 +102,36 @@ namespace SpreadsheetEngine
                     curCell.SetValue(curCell.Text);
                     this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
                 }
+            }
+        }
+
+        /// <summary>
+        /// When input text start with '=' we apply formulas.
+        /// **NOTE:** the below only handle the formula for copy values.
+        /// </summary>
+        /// <param name="curCell"> TheCell object. </param>
+        private void ApplyFormula(TheCell curCell)
+        {
+            // The inputCellName assuming [A~Z][Digits] = [Col][Row].
+            string inputCellName = curCell.Text.Substring(1);
+
+            int col = (int)inputCellName[0] - 'A';
+
+            // the rowindex start at 0.
+            int row = int.Parse(inputCellName.Substring(1));
+
+            Cell target = this.GetCell(row, col);
+
+            // if target cell exsited copy its text.
+            if (target != null)
+            {
+                curCell.SetValue(target.Text);
+                this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
+            }
+            else
+            {
+                curCell.SetValue("null");
+                this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
             }
         }
 
