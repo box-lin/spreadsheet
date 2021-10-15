@@ -5,8 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CptS321
 {
@@ -49,6 +47,11 @@ namespace CptS321
             this.variables[variableName] = variableValue;
         }
 
+        /// <summary>
+        /// Using recursion to build up the expression tree.
+        /// </summary>
+        /// <param name="expression"> expression string. </param>
+        /// <returns> root node of the expression tree. </returns>
         private Node BuildExpTree(string expression)
         {
             char[] operators = { '+', '-', '*', '/' };
@@ -57,65 +60,35 @@ namespace CptS321
                 if (operators.Contains(expression[i]))
                 {
                     OpNode opNode = this.GetOpNode(expression[i]);
+
+                    // recursively to all the way left.
                     opNode.Left = this.BuildExpTree(expression.Substring(0, i));
+
+                    // when backtrack from all the way left, we will assign the right.
                     opNode.Right = this.BuildExpTree(expression.Substring(i + 1));
+
+                    // eventually, recursion steps completed, return the opNode (as it should be the root node).
                     return opNode;
                 }
             }
 
+            // Check and return if the remaining string are constant double value.
             double constant;
             if (double.TryParse(expression, out constant))
             {
                 return new ConstantNode(constant);
             }
+
+            // Else consider it as a variable and return it.
             else
             {
                 return new VariableNode(expression, ref this.variables);
             }
         }
-
-        /*
-        private Node BuildExpTree(string expression)
-        {
-            char[] operators = { '+', '-', '*', '/', '^' };
-            foreach (char op in operators)
-            {
-                Node n = this.Compile(expression, op);
-                if (n != null) return n;
-            }
-
-            double constant;
-            if (double.TryParse(expression, out constant))
-            {
-                return new ConstantNode(constant);
-            }
-            else
-            {
-                // We need a VariableNode
-                return new VariableNode(expression, ref this.variables);
-            }
-        }
-
-        private Node Compile(string expression, char op)
-        {
-            for (int i = expression.Length-1; i >= 0; i--)
-            {
-                if (op == expression[i])
-                {
-                    OpNode opNode = this.GetOpNode(op);
-                    opNode.Left = this.BuildExpTree(expression.Substring(0, i));
-                    opNode.Right = this.BuildExpTree(expression.Substring(i + 1));
-                    return opNode;
-                }
-            }
-
-            return null;
-        }
-        */
 
         /// <summary>
         /// Pick the correct Operation Node.
-        /// (Will not need this after learned and use the OpNode Factory.
+        /// (Will not need this after learned and use the OpNode Factory).
         /// </summary>
         /// <param name="op"> Operator symbol. </param>
         /// <returns> Corresponding OpNode. </returns>
@@ -126,16 +99,9 @@ namespace CptS321
                 case '+': return new PlusOp();
                 case '-': return new SubOp();
                 case '*': return new MulOp();
-                case '/': return new DivideOp();
-                default: // if it is not any of the operators that we support, throw an exception:
-                    throw new NotSupportedException(
-                        "Operator not supported.");
+                default:
+                    return new DivideOp();
             }
-
         }
-
- 
-
-
     }
 }

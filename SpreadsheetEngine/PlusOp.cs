@@ -1,27 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// <copyright file="PlusOp.cs" company="Boxiang Lin - WSU 011601661">
+// Copyright (c) Boxiang Lin - WSU 011601661. All rights reserved.
+// </copyright>
 
 namespace CptS321
 {
-    public class PlusOp:OpNode
+    /// <summary>
+    /// Plus operator class.
+    /// </summary>
+    public class PlusOp : OpNode
     {
-        public static char Operator => '+';
-        public static ushort Precedance => 7;
-
-        public static Associative Associtivity = Associative.Left;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PlusOp"/> class.
+        /// </summary>
         public PlusOp()
         {
         }
 
+        /// <summary>
+        /// Gets the operator symbol.
+        /// </summary>
+        public static char Operator => '+';
+
+        /// <summary>
+        /// Gets the precedance level.
+        /// </summary>
+        public static ushort Precedance => 7;
+
+        /// <summary>
+        /// Gets the associativity.
+        /// </summary>
+        public static Associative Associtivity => Associative.Left;
+
+        /// <summary>
+        /// Evaluate the plus operation from left and right substrees.
+        /// </summary>
+        /// <returns> Evaluated value. </returns>
         public override double Evaluate()
         {
             return this.Left.Evaluate() + this.Right.Evaluate();
         }
-
-
     }
 }

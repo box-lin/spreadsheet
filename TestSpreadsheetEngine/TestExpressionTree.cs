@@ -4,7 +4,7 @@
 using CptS321;
 using NUnit.Framework;
 
-namespace TestSpreadsheetEngine
+namespace CPTS321.Tests
 {
     /// <summary>
     /// Class to test the Expression Tree.
@@ -94,6 +94,20 @@ namespace TestSpreadsheetEngine
             string variable = "B9";
             ExpressionTree exp = new ExpressionTree(variable);
             Assert.AreEqual(exp.Evaluate(), 0.0);
+        }
+
+        /// <summary>
+        /// Test to set multiple variables.
+        /// </summary>
+        /// <param name="expression"> string expression. </param>
+        [TestCase("A5+C9+D5")]
+        public void SetVariableMultiply(string expression)
+        {
+            ExpressionTree exp = new ExpressionTree(expression);
+            exp.SetVariable("A5", 5);
+            exp.SetVariable("C9", 2);
+            exp.SetVariable("D5", 3);
+            Assert.AreEqual(exp.Evaluate(), 10);
         }
     }
 }

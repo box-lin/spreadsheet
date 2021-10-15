@@ -9,9 +9,8 @@ using CptS321;
 using NUnit.Framework;
 using SpreadsheetEngine;
 
-namespace TestSpreadsheetEngine
+namespace CptS321.Tests
 {
-
     /// <summary>
     /// Test Spreadsheet class.
     /// </summary>
@@ -77,6 +76,5 @@ namespace TestSpreadsheetEngine
             Assert.AreEqual(49, this.ss.RowCount);
             Assert.AreEqual(26, this.ss.ColumnCount);
         }
-
     }
 }

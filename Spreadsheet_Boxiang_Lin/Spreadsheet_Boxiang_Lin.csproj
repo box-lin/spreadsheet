@@ -10,6 +10,7 @@
     <AssemblyName>Spreadsheet_Boxiang_Lin</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Deterministic>true</Deterministic>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
