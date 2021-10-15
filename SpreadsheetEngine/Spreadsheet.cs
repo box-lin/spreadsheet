@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="Spreadsheet.cs" company="Boxiang Lin - WSU 011601661">
+// Copyright (c) Boxiang Lin - WSU 011601661. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,9 +18,11 @@ namespace SpreadsheetEngine
     public class Spreadsheet
     {
         /// <summary>
-        /// 2D Array stored the cells.
+        /// Public Required 2D Array stored the cells.
         /// </summary>
+        #pragma warning disable SA1401 // Fields should be public so can be use in Form1.cs
         public Cell[,] Cells;
+        #pragma warning restore SA1401
         private int columnCount;
         private int rowCount;
 
@@ -35,7 +41,7 @@ namespace SpreadsheetEngine
         /// <summary>
         /// CellPropertyChanged Event Handler.
         /// </summary>
-        public event PropertyChangedEventHandler CellPropertyChanged = delegate { };
+        public event PropertyChangedEventHandler CellPropertyChanged = (sender, e) => { };
 
         /// <summary>
         /// Gets the columnCount.
@@ -57,6 +63,17 @@ namespace SpreadsheetEngine
             {
                 return this.rowCount;
             }
+        }
+
+        /// <summary>
+        /// Get Cell by location.
+        /// </summary>
+        /// <param name="row"> row. </param>
+        /// <param name="col"> col. </param>
+        /// <returns> Specific Cell. </returns>
+        public Cell GetCell(int row, int col)
+        {
+            return row >= 0 && row < this.rowCount && col >= 0 && col < this.rowCount ? this.Cells[row, col] : null;
         }
 
         /// <summary>
@@ -136,17 +153,6 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
-        /// Get Cell by location.
-        /// </summary>
-        /// <param name="row"> row. </param>
-        /// <param name="col"> col. </param>
-        /// <returns> Specific Cell. </returns>
-        public Cell GetCell(int row, int col)
-        {
-            return row >= 0 && row < this.rowCount && col >= 0 && col < this.rowCount ? this.Cells[row, col] : null;
-        }
-
-        /// <summary>
         /// Private class inherited from abstract class Cell.
         /// </summary>
         private class TheCell : Cell
@@ -170,6 +176,5 @@ namespace SpreadsheetEngine
                 this.value = value;
             }
         }
-
     }
 }

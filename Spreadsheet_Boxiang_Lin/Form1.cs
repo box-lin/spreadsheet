@@ -15,7 +15,7 @@ namespace Spreadsheet_Boxiang_Lin
     /// </summary>
     public partial class Form1 : Form
     {
-        private Spreadsheet spreadsheet;
+        private readonly Spreadsheet spreadsheet;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Form1"/> class.
@@ -115,6 +115,5 @@ namespace Spreadsheet_Boxiang_Lin
             this.dataGridView1.CancelEdit();
             this.dataGridView1.Columns.Clear();
         }
-
     }
 }
