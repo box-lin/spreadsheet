@@ -16,6 +16,7 @@ namespace CptS321
     public class ExpressionTree
     {
         private string expression;
+        private Dictionary<string, double> variables = new Dictionary<string, double>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
@@ -33,6 +34,16 @@ namespace CptS321
         public double Evaluate()
         {
             return 0.0;
+        }
+
+        /// <summary>
+        /// Sets the specific variable within the ExpressionTree variable dictionary.
+        /// </summary>
+        /// <param name="variableName"> Variables key. </param>
+        /// <param name="variableValue"> Variables val. </param>
+        public void SetVariable(string variableName, double variableValue)
+        {
+            this.variables[variableName] = variableValue;
         }
     }
 }
