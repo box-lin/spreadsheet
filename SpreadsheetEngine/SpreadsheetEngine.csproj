@@ -43,11 +43,15 @@
   <ItemGroup>
     <Compile Include="Cell.cs" />
     <Compile Include="ConstantNode.cs" />
+    <Compile Include="DivideOp.cs" />
     <Compile Include="ExpressionTree.cs" />
+    <Compile Include="MulOp.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="OpNode.cs" />
+    <Compile Include="PlusOp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spreadsheet.cs" />
+    <Compile Include="SubOp.cs" />
     <Compile Include="VariableNode.cs" />
   </ItemGroup>
   <ItemGroup>

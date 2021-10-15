@@ -73,20 +73,6 @@ namespace TestSpreadsheetEngine
             return exp.Evaluate();
         }
 
-        /// <summary>
-        /// Test expression with parenthesis.
-        /// </summary>
-        /// <param name="expression"> expression to be evaluate. </param>
-        /// <returns> result. </returns>
-        [Test]
-        [TestCase("5/(3+2)", ExpectedResult = 1.0)]
-        [TestCase("10*(3-1)", ExpectedResult = 20.0)]
-        [TestCase("(2+1)*(3-1)", ExpectedResult = 4.0)]
-        [TestCase("((2+2))", ExpectedResult = 4.0)]
-        public double TestEvaluateParenthesis(string expression)
-        {
-            ExpressionTree exp = new ExpressionTree(expression);
-            return exp.Evaluate();
-        }
+
     }
 }

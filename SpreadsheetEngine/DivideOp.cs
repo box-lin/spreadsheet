@@ -19,7 +19,7 @@ namespace CptS321
 
         public override double Evaluate()
         {
-            return Left.Evaluate() / Right.Evaluate();
+            return this.Left.Evaluate() / this.Right.Evaluate();
         }
 
 

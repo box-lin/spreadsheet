@@ -6,7 +6,16 @@ using System.Threading.Tasks;
 
 namespace CptS321
 {
-    public class OpNode
+    public abstract class OpNode : Node
     {
+        public enum Associative
+        {
+            Right,
+            Left
+        }
+
+        public Node Left { get; set; }
+        public Node Right { get; set; }
+
     }
 }
