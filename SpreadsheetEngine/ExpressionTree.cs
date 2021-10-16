@@ -99,8 +99,9 @@ namespace CptS321
                 case '+': return new PlusOp();
                 case '-': return new SubOp();
                 case '*': return new MulOp();
+                case '/': return new DivideOp();
                 default:
-                    return new DivideOp();
+                    return null;
             }
         }
     }

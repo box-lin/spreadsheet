@@ -8,7 +8,7 @@ using System.ComponentModel;
 using CptS321;
 using NUnit.Framework;
 
-namespace TestSpreadsheetEngine
+namespace CptS321.Tests
 {
     /// <summary>
     /// This Class to Test the properties of the Cell.

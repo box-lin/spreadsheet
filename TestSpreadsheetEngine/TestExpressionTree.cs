@@ -4,7 +4,7 @@
 using CptS321;
 using NUnit.Framework;
 
-namespace CPTS321.Tests
+namespace CptS321.Tests
 {
     /// <summary>
     /// Class to test the Expression Tree.
