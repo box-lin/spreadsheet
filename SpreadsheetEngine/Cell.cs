@@ -19,12 +19,17 @@ namespace CptS321
         /// <summary>
         /// Text inside a cell.
         /// </summary>
+        #pragma warning disable SA1401 // Fields should be protected so can be use in spreadsheet
         protected string text;
+        #pragma warning restore SA1401
 
         /// <summary>
         /// Value of a cell.
         /// </summary>
+        #pragma warning disable SA1401 // Fields should be protected so can be use in spreadsheet
         protected string value;
+        #pragma warning restore SA1401
+
         private readonly int rowIndex;
         private readonly char columnIndex;
 
@@ -40,7 +45,7 @@ namespace CptS321
         }
 
         /// <inheritdoc/>
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+        public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
 
         /// <summary>
         /// Gets the rowIndex.

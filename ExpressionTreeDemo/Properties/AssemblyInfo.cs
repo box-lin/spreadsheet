@@ -9,11 +9,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SpreadsheetEngine")]
+[assembly: AssemblyTitle("ExpressionTreeDemo")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SpreadsheetEngine")]
+[assembly: AssemblyProduct("ExpressionTreeDemo")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("cfcdcec2-ff0d-46e6-8234-65bfb9dc33a7")]
+[assembly: Guid("05ea3e74-5f79-43b1-979f-7dd170de3ad5")]
 
 // Version information for an assembly consists of the following four values:
 //
