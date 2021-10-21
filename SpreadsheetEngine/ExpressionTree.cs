@@ -16,6 +16,7 @@ namespace CptS321
         private Node root;
         private string expression;
         private Dictionary<string, double> variables;
+        private OpNodeFactory factory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
@@ -25,6 +26,7 @@ namespace CptS321
         {
             this.expression = expression;
             this.variables = new Dictionary<string, double>();
+            this.factory = new OpNodeFactory();
             this.root = this.BuildExpTree(expression);
         }
 
@@ -46,6 +48,82 @@ namespace CptS321
         {
             this.variables[variableName] = variableValue;
         }
+       
+        private List<string> GetPostFixList(string expression)
+        {
+            List<string> postList = new List<string>();
+            Stack<char> stack = new Stack<char>();
+            int operandStart = -1;
+            for (int i = 0; i < expression.Length; i++)
+            {
+                char c = expression[i];
+
+                if (this.IsOpOrParenthesis(c))
+                {
+                    if (operandStart != -1)
+                    {
+                        string operand = expression.Substring(operandStart, i - operandStart);
+                        postList.Add(operand);
+                        operandStart = -1;
+                    }
+
+                    if (c.Equals('('))
+                    {
+                        stack.Push(c);
+                    }
+                    else if (c.Equals(')'))
+                    {
+                        char op = stack.Pop();
+                        while (!op.Equals('('))
+                        {
+                            postList.Add(op.ToString());
+                            op = stack.Pop();
+                        }
+                    }
+                }
+                else if (this.factory.IsOperator(c))
+                {
+                    if (stack.Count == 0 || stack.Peek().Equals('('))
+                    {
+                        stack.Push(c);
+                    }
+                    else if (this.IsHigherPrecedance(c, stack.Peek())
+                        || (this.IsSamePrecedance(c, stack.Peek()) && this.IsRightAssociative(c)))
+                    {
+                        stack.Push(c);
+                    }
+                    else if (this.IsLowerPrecedance(c, stack.Peek())
+                        || (this.IsSamePrecedance(c, stack.Peek()) && this.IsLeftAssociative(c)))
+                    {
+                        do
+                        {
+                            char op = stack.Pop();
+                            postList.Add(op.ToString());
+                        }while (stack.Count > 0 && (this.IsLowerPrecedance(c, stack.Peek())
+                        || (this.IsSamePrecedance(c, stack.Peek()) && this.IsLeftAssociative(c))));
+
+                        stack.Push(c);
+                    }
+                }
+                else if (operandStart == -1)
+                {
+                    operandStart = i;
+                }
+            }
+
+            if (operandStart != -1)
+            {
+                postList.Add(expression.Substring(operandStart, expression.Length - operandStart));
+                operandStart = -1;
+            }
+
+            while (stack.Count > 0)
+            {
+                postList.Add(stack.Pop().ToString());
+            }
+
+            return postList;
+        }
 
         /// <summary>
         /// Using recursion to build up the expression tree.
@@ -54,48 +132,146 @@ namespace CptS321
         /// <returns> root node of the expression tree. </returns>
         private Node BuildExpTree(string expression)
         {
-            char[] operators = { '+', '-', '*', '/' };
-            for (int i = expression.Length - 1; i >= 0; i--)
+            Stack<Node> nodes = new Stack<Node>();
+            var post = this.GetPostFixList(expression);
+            foreach (var item in post)
             {
-                if (operators.Contains(expression[i]))
+                if (item.Length == 1 && this.IsOpOrParenthesis(item[0]))
                 {
-                    OpNode opNode = this.GetOpNode(expression[i]);
-
-                    // recursively to all the way left.
-                    opNode.Left = this.BuildExpTree(expression.Substring(0, i));
-
-                    // when backtrack from all the way left, we will assign the right.
-                    opNode.Right = this.BuildExpTree(expression.Substring(i + 1));
-
-                    // eventually, recursion steps completed, return the opNode (as it should be the root node).
-                    return opNode;
+                    OpNode node = this.factory.CreateOperatorNode(item[0]);
+                    node.Right = nodes.Pop();
+                    node.Left = nodes.Pop();
+                    nodes.Push(node);
+                }
+                else
+                {
+                    double num = 0.0;
+                    if (double.TryParse(item, out num))
+                    {
+                        nodes.Push(new ConstantNode(num));
+                    }
+                    else
+                    {
+                        nodes.Push(new VariableNode(item, ref this.variables));
+                    }
                 }
             }
 
-            // Check and return if the remaining string are constant double value.
-            double constant;
-            if (double.TryParse(expression, out constant))
-            {
-                return new ConstantNode(constant);
-            }
+            return nodes.Pop();
+        }
 
-            // Else consider it as a variable and return it.
+        /// <summary>
+        /// Check if the input char is operator or parenthesis.
+        /// </summary>
+        /// <param name="c"> char. </param>
+        /// <returns> True or False. </returns>
+        private bool IsOpOrParenthesis(char c)
+        {
+            if (c.Equals('(') || c.Equals(')') || this.factory.IsOperator(c))
+            {
+                return true;
+            }
             else
             {
-                return new VariableNode(expression, ref this.variables);
+                return false;
             }
         }
 
         /// <summary>
-        /// Pick the correct Operation Node.
-        /// (Will not need this after learned and use the OpNode Factory).
+        /// Check if x precedance higher than y.
         /// </summary>
-        /// <param name="op"> Operator symbol. </param>
-        /// <returns> Corresponding OpNode. </returns>
-        private OpNode GetOpNode(char op)
+        /// <param name="x"> char x. </param>
+        /// <param name="y"> char y. </param>
+        /// <returns> True or False. </returns>
+        private bool IsHigherPrecedance(char x, char y)
         {
-            OpNodeFactory factory = new OpNodeFactory();
-            return factory.CreateOperatorNode(op);
+            OpNode cur = this.factory.CreateOperatorNode(x);
+            OpNode topOp = this.factory.CreateOperatorNode(y);
+            if (cur.Precedence > topOp.Precedence)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
+
+        /// <summary>
+        /// Check if x precedance same as y.
+        /// </summary>
+        /// <param name="x"> char x. </param>
+        /// <param name="y"> char y. </param>
+        /// <returns> True or False. </returns>
+        private bool IsSamePrecedance(char x, char y)
+        {
+            OpNode cur = this.factory.CreateOperatorNode(x);
+            OpNode topOp = this.factory.CreateOperatorNode(y);
+            if (cur.Precedence == topOp.Precedence)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Check if x precedance lower than y.
+        /// </summary>
+        /// <param name="x"> char x. </param>
+        /// <param name="y"> char y. </param>
+        /// <returns> True or False. </returns>
+        private bool IsLowerPrecedance(char x, char y)
+        {
+            OpNode cur = this.factory.CreateOperatorNode(x);
+            OpNode topOp = this.factory.CreateOperatorNode(y);
+            if (cur.Precedence < topOp.Precedence)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Check if x is associtive left.
+        /// </summary>
+        /// <param name="x"> char x. </param>
+        /// <returns>True or False.  </returns>
+        private bool IsLeftAssociative(char x)
+        {
+            OpNode cur = this.factory.CreateOperatorNode(x);
+            if (cur.Associativity == OpNode.Associative.Left)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Check if x is associtive left.
+        /// </summary>
+        /// <param name="x"> char x, </param>
+        /// <returns>True or False.  </returns>
+        private bool IsRightAssociative(char x)
+        {
+            OpNode cur = this.factory.CreateOperatorNode(x);
+            if (cur.Associativity == OpNode.Associative.Right)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+       
     }
 }

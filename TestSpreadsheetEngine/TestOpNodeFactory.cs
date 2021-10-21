@@ -26,13 +26,14 @@ namespace CptS321.Tests
         {
             this.factory = new OpNodeFactory();
         }
-
+        /*
         /// <summary>
         /// Test InitOp if all current exist operator objects have been filled into the dictionary.
         /// </summary>
         [Test]
         public void TestInitOp()
         {
+
             HashSet<char> opSet = new HashSet<char> { '+', '-', '/', '*'};
             int expectSum = opSet.Count;
             int actualSum = 0;
@@ -55,7 +56,7 @@ namespace CptS321.Tests
         public void TestInitOpWithAssembly()
         {
             Assembly.Load("OperatorLibrary-ForTests");
-            OpNodeFactory fact= new OpNodeFactory();
+            OpNodeFactory fact = new OpNodeFactory();
             HashSet<char> opSet = new HashSet<char> { '+', '-', '/', '*', '^' };
             int expectSum = opSet.Count;
             int actualSum = 0;
@@ -70,7 +71,7 @@ namespace CptS321.Tests
 
             Assert.That(actualSum, Is.EqualTo(expectSum), "The InitOp doesn't cover all the op classes that currently provided in the namespace.");
         }
-
+        */
         /// <summary>
         /// Test the correctness operator object that CreateOperatorNode method returns.
         /// </summary>

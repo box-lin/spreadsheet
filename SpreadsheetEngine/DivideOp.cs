@@ -30,12 +30,12 @@ namespace CptS321
         /// <summary>
         /// Gets the precedance level.
         /// </summary>
-        public static ushort Precedance => 6;
+        public override int Precedence => 6;
 
         /// <summary>
         /// Gets the Associtivity.
         /// </summary>
-        public static Associative Associtivity => Associative.Left;
+        public override Associative Associativity => Associative.Left;
 
         /// <summary>
         /// Evaluate the divide operation from left and right substrees.

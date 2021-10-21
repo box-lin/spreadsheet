@@ -26,6 +26,16 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Gets the precedence of the operator.
+        /// </summary>
+        public abstract int Precedence { get; }
+
+        /// <summary>
+        /// Gets the associativity of the operator.
+        /// </summary>
+        public abstract Associative Associativity { get; }
+
+        /// <summary>
         /// Gets or sets the left node.
         /// </summary>
         public Node Left { get; set; }

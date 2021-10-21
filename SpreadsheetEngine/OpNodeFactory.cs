@@ -17,65 +17,83 @@ namespace CptS321
     public class OpNodeFactory
     {
         /// <summary>
-        /// Store.
+        /// Holds valid operators char and type.
         /// </summary>
-        private Dictionary<char, OpNode> op;
+        private Dictionary<char, Type> operators;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OpNodeFactory"/> class.
         /// </summary>
         public OpNodeFactory()
         {
-            this.op = new Dictionary<char, OpNode>();
-            this.InitOp();
+            this.operators = new Dictionary<char, Type>();
+            this.TraverseAvailableOperators((op, type) => this.operators.Add(op, type));
         }
 
         /// <summary>
-        /// Gets provide a get Op dictionary for testing purpose.
+        /// Delegate for operator char and type.
         /// </summary>
-        public Dictionary<char, OpNode> Op
+        /// <param name="op">Operater character.</param>
+        /// <param name="type">Operator type.</param>
+        private delegate void OnOperator(char op, Type type);
+
+        /// <summary>
+        /// Takes an operator char and returns coresponding operator node.
+        /// Accepts all operators that are defined which inherit the OperatorNode class.
+        /// </summary>
+        /// <param name="op">Operator.</param>
+        /// <returns>Operator node.</returns>
+        public OpNode CreateOperatorNode(char op)
         {
-            get
+            if (this.operators.ContainsKey(op))
             {
-                return this.op;
+                object operatorNodeObject = System.Activator.CreateInstance(this.operators[op]);
+                if (operatorNodeObject is OpNode)
+                {
+                    return (OpNode)operatorNodeObject;
+                }
             }
+
+            throw new Exception("Unsupported operator");
         }
 
         /// <summary>
-        /// Create the operator object.
+        /// Returns if the operator is supported.
         /// </summary>
-        /// <param name="symbol"> char symbol of the operator. </param>
-        /// <returns> return a operator object or exception. </returns>
-        public OpNode CreateOperatorNode(char symbol)
+        /// <param name="op">Operator char.</param>
+        /// <returns>Boolean.</returns>
+        internal bool IsOperator(char op)
         {
-            if (this.op.ContainsKey(symbol))
-            {
-                return this.op[symbol];
-            }
-            else
-            {
-                throw new NotSupportedException("The operation" + symbol.ToString() + "is not supoorted");
-            }
+            return this.operators.ContainsKey(op);
         }
 
         /// <summary>
-        /// Use reflection to initil the dictionary.
-        /// reference about access classes info in namespace: https://blog.csdn.net/huoliya12/article/details/78873123
-        /// refrence about get type's property: https://www.codenong.com/1196991/.
+        /// Traverses all assemblies for subclasses of OperatorNode
+        /// and adds their Operator property and type to operators dictionary.
         /// </summary>
-        private void InitOp()
+        /// <param name="onOperator">Delegate.</param>
+        private void TraverseAvailableOperators(OnOperator onOperator)
         {
-            // For load assembly purpose.
+            Type operatorNodeType = typeof(OpNode);
+
+            // Load outside assembly purpose.
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                IEnumerable<Type> operatorTypes = assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(OpNode)));
-                foreach (var item in operatorTypes)
+                IEnumerable<Type> operatorTypes = assembly.GetTypes().Where(type => type.IsSubclassOf(operatorNodeType));
+
+                foreach (var type in operatorTypes)
                 {
-                    if (item.IsSubclassOf(typeof(OpNode)))
+                    PropertyInfo operatorField = type.GetProperty("Operator");
+
+                    if (operatorField != null)
                     {
-                        char symbol = (char)item.GetProperty("Operator").GetValue(item);
-                        OpNode curOp = (OpNode)System.Activator.CreateInstance(item);
-                        this.op[symbol] = curOp;
+                        object value = operatorField.GetValue(type);
+
+                        if (value is char)
+                        {
+                            char operatorSymbol = (char)value;
+                            onOperator(operatorSymbol, type);
+                        }
                     }
                 }
             }
