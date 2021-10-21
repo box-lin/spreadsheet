@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using CptS321;
 using NUnit.Framework;
 
@@ -15,7 +16,16 @@ namespace CptS321.Tests
     [TestFixture]
     public class TestOpNodeFactory
     {
-        private readonly OpNodeFactory factory = new OpNodeFactory();
+        private OpNodeFactory factory;
+
+        /// <summary>
+        /// Setup the factory.
+        /// </summary>
+        [SetUp]
+        public void SetUp()
+        {
+            this.factory = new OpNodeFactory();
+        }
 
         /// <summary>
         /// Test InitOp if all current exist operator objects have been filled into the dictionary.
@@ -23,10 +33,33 @@ namespace CptS321.Tests
         [Test]
         public void TestInitOp()
         {
-            HashSet<char> opSet = new HashSet<char> { '+', '-', '/', '*' };
+            HashSet<char> opSet = new HashSet<char> { '+', '-', '/', '*'};
             int expectSum = opSet.Count;
             int actualSum = 0;
             foreach (char key in this.factory.Op.Keys)
+            {
+                if (opSet.Contains(key))
+                {
+                    opSet.Remove(key);
+                    actualSum++;
+                }
+            }
+
+            Assert.That(actualSum, Is.EqualTo(expectSum), "The InitOp doesn't cover all the op classes that currently provided in the namespace.");
+        }
+
+        /// <summary>
+        /// Test InitOp if all current exist operator objects have been filled into the dictionary.
+        /// </summary>
+        [Test]
+        public void TestInitOpWithAssembly()
+        {
+            Assembly.Load("OperatorLibrary-ForTests");
+            OpNodeFactory fact= new OpNodeFactory();
+            HashSet<char> opSet = new HashSet<char> { '+', '-', '/', '*', '^' };
+            int expectSum = opSet.Count;
+            int actualSum = 0;
+            foreach (char key in fact.Op.Keys)
             {
                 if (opSet.Contains(key))
                 {

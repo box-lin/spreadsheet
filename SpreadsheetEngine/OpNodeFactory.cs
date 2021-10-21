@@ -65,13 +65,18 @@ namespace CptS321
         /// </summary>
         private void InitOp()
         {
-            foreach (var item in Assembly.GetExecutingAssembly().GetTypes())
+            // For load assembly purpose.
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                if (item.IsSubclassOf(typeof(OpNode)))
+                IEnumerable<Type> operatorTypes = assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(OpNode)));
+                foreach (var item in operatorTypes)
                 {
-                    char symbol = (char)item.GetProperty("Operator").GetValue(item);
-                    OpNode curOp = (OpNode)System.Activator.CreateInstance(item);
-                    this.op[symbol] = curOp;
+                    if (item.IsSubclassOf(typeof(OpNode)))
+                    {
+                        char symbol = (char)item.GetProperty("Operator").GetValue(item);
+                        OpNode curOp = (OpNode)System.Activator.CreateInstance(item);
+                        this.op[symbol] = curOp;
+                    }
                 }
             }
         }

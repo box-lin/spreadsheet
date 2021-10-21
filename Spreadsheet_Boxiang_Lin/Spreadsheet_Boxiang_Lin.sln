@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionTreeDemo", "..\Ex
 		{CFCDCEC2-FF0D-46E6-8234-65BFB9DC33A7} = {CFCDCEC2-FF0D-46E6-8234-65BFB9DC33A7}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OperatorLibrary-ForTests", "..\OperatorLibrary-ForTests\OperatorLibrary-ForTests.csproj", "{B8098DE5-98AF-4288-9C7D-DC880498B6CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{05EA3E74-5F79-43B1-979F-7DD170DE3AD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05EA3E74-5F79-43B1-979F-7DD170DE3AD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05EA3E74-5F79-43B1-979F-7DD170DE3AD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8098DE5-98AF-4288-9C7D-DC880498B6CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8098DE5-98AF-4288-9C7D-DC880498B6CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8098DE5-98AF-4288-9C7D-DC880498B6CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8098DE5-98AF-4288-9C7D-DC880498B6CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

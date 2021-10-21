@@ -51,6 +51,10 @@
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OperatorLibrary-ForTests\OperatorLibrary-ForTests.csproj">
+      <Project>{b8098de5-98af-4288-9c7d-dc880498b6cf}</Project>
+      <Name>OperatorLibrary-ForTests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SpreadsheetEngine\SpreadsheetEngine.csproj">
       <Project>{cfcdcec2-ff0d-46e6-8234-65bfb9dc33a7}</Project>
       <Name>SpreadsheetEngine</Name>
