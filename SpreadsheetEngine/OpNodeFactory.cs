@@ -59,7 +59,7 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Initil the dictionary.
+        /// Use reflection to initil the dictionary.
         /// reference about access classes info in namespace: https://blog.csdn.net/huoliya12/article/details/78873123
         /// refrence about get type's property: https://www.codenong.com/1196991/.
         /// </summary>

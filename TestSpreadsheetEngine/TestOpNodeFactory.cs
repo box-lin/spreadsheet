@@ -15,7 +15,7 @@ namespace CptS321.Tests
     [TestFixture]
     public class TestOpNodeFactory
     {
-        private OpNodeFactory factory = new OpNodeFactory();
+        private readonly OpNodeFactory factory = new OpNodeFactory();
 
         /// <summary>
         /// Test InitOp if all current exist operator objects have been filled into the dictionary.

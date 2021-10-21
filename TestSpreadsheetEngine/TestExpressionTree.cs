@@ -109,5 +109,36 @@ namespace CptS321.Tests
             exp.SetVariable("D5", 3);
             Assert.AreEqual(exp.Evaluate(), 10);
         }
+
+        /// <summary>
+        /// Test the precedance between operators.
+        /// </summary>
+        /// <param name="expression"> expression. </param>
+        /// <returns> evaluated result. </returns>
+        [Test]
+        [TestCase("5+20*5", ExpectedResult = 105)]
+        [TestCase("5-20/10", ExpectedResult = 3)]
+        [TestCase("10*5+2*3", ExpectedResult = 56)]
+        public double TestPrecedanceOperation(string expression)
+        {
+            ExpressionTree exp = new ExpressionTree(expression);
+            return exp.Evaluate();
+        }
+
+        /// <summary>
+        /// Test the precedance for parenthesis.
+        /// </summary>
+        /// <param name="expression"> expression. </param>
+        /// <returns> evaluated result. </returns>
+        [Test]
+        [TestCase("5*(2+3)+2", ExpectedResult = 27)]
+        [TestCase("((((3))))", ExpectedResult = 3)]
+        [TestCase("(7+2-1+1)*2", ExpectedResult = 18)]
+        public double TestParenthesisOperation(string expression)
+        {
+            ExpressionTree exp = new ExpressionTree(expression);
+            return exp.Evaluate();
+        }
+
     }
 }
