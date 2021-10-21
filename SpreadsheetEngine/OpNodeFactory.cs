@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,6 +27,7 @@ namespace CptS321
         public OpNodeFactory()
         {
             this.op = new Dictionary<char, OpNode>();
+            this.InitOp();
         }
 
         /// <summary>
@@ -58,11 +60,20 @@ namespace CptS321
 
         /// <summary>
         /// Initil the dictionary.
+        /// reference about access classes info in namespace: https://blog.csdn.net/huoliya12/article/details/78873123
+        /// refrence about get type's property: https://www.codenong.com/1196991/.
         /// </summary>
         private void InitOp()
         {
-            //this.op['+'] = new PlusOp();
+            foreach (var item in Assembly.GetExecutingAssembly().GetTypes())
+            {
+                if (item.IsSubclassOf(typeof(OpNode)))
+                {
+                    char symbol = (char)item.GetProperty("Operator").GetValue(item);
+                    OpNode curOp = (OpNode)System.Activator.CreateInstance(item);
+                    this.op[symbol] = curOp;
+                }
+            }
         }
-
     }
 }

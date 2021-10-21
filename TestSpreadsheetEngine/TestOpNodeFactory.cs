@@ -1,14 +1,14 @@
-﻿using System;
+﻿// <copyright file="TestOpNodeFactory.cs" company="Boxiang Lin - WSU 011601661">
+// Copyright (c) Boxiang Lin - WSU 011601661. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CptS321;
 using NUnit.Framework;
 
-namespace TestSpreadsheetEngine
+namespace CptS321.Tests
 {
-
     /// <summary>
     /// Class to test the Expression Tree.
     /// </summary>
@@ -39,15 +39,15 @@ namespace TestSpreadsheetEngine
         }
 
         /// <summary>
-        /// Test correctness operator object that CreateOperatorNode method returns.
+        /// Test the correctness operator object that CreateOperatorNode method returns.
         /// </summary>
         [Test]
         public void TestCreateOperatorNode()
         {
-            Assert.That(this.factory.CreateOperatorNode('+'), Is.InstanceOf<PlusOp>());
-            Assert.That(this.factory.CreateOperatorNode('-'), Is.InstanceOf<SubOp>());
-            Assert.That(this.factory.CreateOperatorNode('*'), Is.InstanceOf<MulOp>());
-            Assert.That(this.factory.CreateOperatorNode('/'), Is.InstanceOf<DivideOp>());
+            Assert.That(this.factory.CreateOperatorNode('+'), Is.TypeOf<PlusOp>());
+            Assert.That(this.factory.CreateOperatorNode('-'), Is.TypeOf<SubOp>());
+            Assert.That(this.factory.CreateOperatorNode('*'), Is.TypeOf<MulOp>());
+            Assert.That(this.factory.CreateOperatorNode('/'), Is.TypeOf<DivideOp>());
         }
 
         /// <summary>

@@ -94,15 +94,8 @@ namespace CptS321
         /// <returns> Corresponding OpNode. </returns>
         private OpNode GetOpNode(char op)
         {
-            switch (op)
-            {
-                case '+': return new PlusOp();
-                case '-': return new SubOp();
-                case '*': return new MulOp();
-                case '/': return new DivideOp();
-                default:
-                    return null;
-            }
+            OpNodeFactory factory = new OpNodeFactory();
+            return factory.CreateOperatorNode(op);
         }
     }
 }
