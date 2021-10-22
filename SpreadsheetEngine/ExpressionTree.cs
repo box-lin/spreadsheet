@@ -14,7 +14,6 @@ namespace CptS321
     public class ExpressionTree
     {
         private Node root;
-        private string expression;
         private Dictionary<string, double> variables;
         private OpNodeFactory factory;
 
@@ -24,7 +23,6 @@ namespace CptS321
         /// <param name="expression"> input expression. </param>
         public ExpressionTree(string expression)
         {
-            this.expression = expression;
             this.variables = new Dictionary<string, double>();
             this.factory = new OpNodeFactory();
             this.root = this.BuildExpTree(expression);
@@ -48,126 +46,174 @@ namespace CptS321
         {
             this.variables[variableName] = variableValue;
         }
-       
-        private List<string> GetPostFixList(string expression)
-        {
-            List<string> postList = new List<string>();
-            Stack<char> stack = new Stack<char>();
-            int operandStart = -1;
-            for (int i = 0; i < expression.Length; i++)
-            {
-                char c = expression[i];
-
-                if (this.IsOpOrParenthesis(c))
-                {
-                    if (operandStart != -1)
-                    {
-                        string operand = expression.Substring(operandStart, i - operandStart);
-                        postList.Add(operand);
-                        operandStart = -1;
-                    }
-
-                    if (c.Equals('('))
-                    {
-                        stack.Push(c);
-                    }
-                    else if (c.Equals(')'))
-                    {
-                        char op = stack.Pop();
-                        while (!op.Equals('('))
-                        {
-                            postList.Add(op.ToString());
-                            op = stack.Pop();
-                        }
-                    }
-                }
-                else if (this.factory.IsOperator(c))
-                {
-                    if (stack.Count == 0 || stack.Peek().Equals('('))
-                    {
-                        stack.Push(c);
-                    }
-                    else if (this.IsHigherPrecedance(c, stack.Peek())
-                        || (this.IsSamePrecedance(c, stack.Peek()) && this.IsRightAssociative(c)))
-                    {
-                        stack.Push(c);
-                    }
-                    else if (this.IsLowerPrecedance(c, stack.Peek())
-                        || (this.IsSamePrecedance(c, stack.Peek()) && this.IsLeftAssociative(c)))
-                    {
-                        do
-                        {
-                            char op = stack.Pop();
-                            postList.Add(op.ToString());
-                        }while (stack.Count > 0 && (this.IsLowerPrecedance(c, stack.Peek())
-                        || (this.IsSamePrecedance(c, stack.Peek()) && this.IsLeftAssociative(c))));
-
-                        stack.Push(c);
-                    }
-                }
-                else if (operandStart == -1)
-                {
-                    operandStart = i;
-                }
-            }
-
-            if (operandStart != -1)
-            {
-                postList.Add(expression.Substring(operandStart, expression.Length - operandStart));
-                operandStart = -1;
-            }
-
-            while (stack.Count > 0)
-            {
-                postList.Add(stack.Pop().ToString());
-            }
-
-            return postList;
-        }
 
         /// <summary>
-        /// Using recursion to build up the expression tree.
+        /// Builds an expression tree from expression string.
+        /// Returns the root node of the expression tree.
         /// </summary>
-        /// <param name="expression"> expression string. </param>
-        /// <returns> root node of the expression tree. </returns>
+        /// <param name="expression">Expression string.</param>
+        /// <returns>Root of built expression tree.</returns>
         private Node BuildExpTree(string expression)
         {
-            Stack<Node> nodes = new Stack<Node>();
-            var post = this.GetPostFixList(expression);
-            foreach (var item in post)
+            var postfixList = this.GetPostfixList(expression);
+            Stack<Node> stack = new Stack<Node>();
+
+            foreach (var item in postfixList)
             {
-                if (item.Length == 1 && this.IsOpOrParenthesis(item[0]))
+                if (item.Length == 1 && this.IsParenthesisOrOp(item[0]))
                 {
                     OpNode node = this.factory.CreateOperatorNode(item[0]);
-                    node.Right = nodes.Pop();
-                    node.Left = nodes.Pop();
-                    nodes.Push(node);
+                    node.Right = stack.Pop();
+                    node.Left = stack.Pop();
+                    stack.Push(node);
                 }
                 else
                 {
                     double num = 0.0;
                     if (double.TryParse(item, out num))
                     {
-                        nodes.Push(new ConstantNode(num));
+                        stack.Push(new ConstantNode(num));
                     }
                     else
                     {
-                        nodes.Push(new VariableNode(item, ref this.variables));
+                        stack.Push(new VariableNode(item, ref this.variables));
                     }
                 }
             }
 
-            return nodes.Pop();
+            return stack.Pop();
         }
 
         /// <summary>
-        /// Check if the input char is operator or parenthesis.
+        /// Using Dijkstra's Shunting Yard algorithm to compute the Post Fix String List.
         /// </summary>
-        /// <param name="c"> char. </param>
-        /// <returns> True or False. </returns>
-        private bool IsOpOrParenthesis(char c)
+        /// <param name="expression"> An infix string expression. </param>
+        /// <returns> Post fix string list.</returns>
+        private List<string> GetPostfixList(string expression)
         {
-            if (c.Equals('(') || c.Equals(')') || this.factory.IsOperator(c))
+            Stack<char> stack = new Stack<char>();
+            List<string> postfixList = new List<string>();
+
+            // loops over each char in expression string
+            for (int i = 0; i < expression.Length; i++)
+            {
+                char c = expression[i];
+                if (c.Equals('('))
+                {
+                    stack.Push(c);
+                }
+                else if (c.Equals(')'))
+                {
+                    // while the top of the stack is not a left parenthesis, pop and add to list
+                    while (!stack.Peek().Equals('('))
+                    {
+                        postfixList.Add(stack.Pop().ToString());
+                    }
+
+                    stack.Pop(); // pop the left parenthesis from the top of the stack
+                }
+
+                // If the current char is a valid operator
+                else if (this.factory.IsOperator(c))
+                {
+                    // if the stack is empty or the next char is a left parenthesis
+                    if (stack.Count == 0 || stack.Peek().Equals('('))
+                    {
+                        stack.Push(c);
+                    }
+                    else if (this.IsHigherPrecedence(c, stack.Peek()) ||
+                               (this.IsSamePrecedence(c, stack.Peek()) && this.IsRightAssociative(c)))
+                    {
+                        stack.Push(c);
+                    }
+                    else if (this.IsLowerPrecedence(c, stack.Peek()) ||
+                        (this.IsSamePrecedence(c, stack.Peek()) && this.IsLeftAssociative(c)))
+                    {
+                        while (stack.Count > 0 && this.factory.IsOperator(stack.Peek())
+                            && (this.IsLowerPrecedence(c, stack.Peek())
+                            || (this.IsSamePrecedence(c, stack.Peek()) && this.IsLeftAssociative(c))))
+                        {
+                            char op = stack.Pop();
+                            postfixList.Add(op.ToString());
+                        }
+
+                        stack.Push(c);
+
+                        //char top = stack.Pop();
+
+                        //// since the stack top op has the higher precedence, we add it to the list first.
+                        //postfixList.Add(top.ToString());
+
+                        //// We want to keep discover as far as deep in the stack with the c, since loop i++, we make it i--, cur c == next c.
+                        //// So that we can keep compare the precedance levels between c and the ops in the stack.
+                        //// We can do it in while loop but in case (x+y-z)+d we need to measure the occurance of (, since stack contains[ops,'(', ')'].
+                        //i--;
+                    }
+                }
+
+                // if the current c begins with digits, it is a constant number.
+                else if (char.IsDigit(c))
+                {
+                    string constant = c.ToString();
+
+                    // we have to loop throup all consecutive constant number.
+                    for (int j = i + 1; j < expression.Length; j++)
+                    {
+                        if (char.IsDigit(expression[j]))
+                        {
+                            constant += expression[j].ToString();
+
+                            // update the i counter as well since we have ealier process some consecutive constants.
+                            i++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    postfixList.Add(constant);
+                }
+
+                // Not a (, ), op, and constant, then it should be the variable.
+                else
+                {
+                    string variable = c.ToString();
+                    for (int j = i + 1; j < expression.Length; j++)
+                    {
+                        if (!this.factory.IsOperator(expression[j]))
+                        {
+                            variable += expression[j].ToString();
+                            i++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    postfixList.Add(variable);
+                }
+            }
+
+            // We add the rest of the operator into a postFixList.
+            while (stack.Count > 0)
+            {
+                postfixList.Add(stack.Pop().ToString());
+            }
+
+            return postfixList;
+        }
+
+        /// <summary>
+        /// Check if the char is part of parenthesis or operator.
+        /// </summary>
+        /// <param name="c"> char c. </param>
+        /// <returns> true or false. </returns>
+        private bool IsParenthesisOrOp(char c)
+        {
+            OpNodeFactory fac = new OpNodeFactory();
+            if (c == '(' || c == ')' || fac.IsOperator(c))
             {
                 return true;
             }
@@ -183,11 +229,11 @@ namespace CptS321
         /// <param name="x"> char x. </param>
         /// <param name="y"> char y. </param>
         /// <returns> True or False. </returns>
-        private bool IsHigherPrecedance(char x, char y)
+        private bool IsHigherPrecedence(char x, char y)
         {
             OpNode cur = this.factory.CreateOperatorNode(x);
             OpNode topOp = this.factory.CreateOperatorNode(y);
-            if (cur.Precedence > topOp.Precedence)
+            if (cur.Precedence < topOp.Precedence)
             {
                 return true;
             }
@@ -203,7 +249,7 @@ namespace CptS321
         /// <param name="x"> char x. </param>
         /// <param name="y"> char y. </param>
         /// <returns> True or False. </returns>
-        private bool IsSamePrecedance(char x, char y)
+        private bool IsSamePrecedence(char x, char y)
         {
             OpNode cur = this.factory.CreateOperatorNode(x);
             OpNode topOp = this.factory.CreateOperatorNode(y);
@@ -223,11 +269,11 @@ namespace CptS321
         /// <param name="x"> char x. </param>
         /// <param name="y"> char y. </param>
         /// <returns> True or False. </returns>
-        private bool IsLowerPrecedance(char x, char y)
+        private bool IsLowerPrecedence(char x, char y)
         {
             OpNode cur = this.factory.CreateOperatorNode(x);
             OpNode topOp = this.factory.CreateOperatorNode(y);
-            if (cur.Precedence < topOp.Precedence)
+            if (cur.Precedence > topOp.Precedence)
             {
                 return true;
             }
@@ -258,7 +304,7 @@ namespace CptS321
         /// <summary>
         /// Check if x is associtive left.
         /// </summary>
-        /// <param name="x"> char x, </param>
+        /// <param name="x"> char x. </param>
         /// <returns>True or False.  </returns>
         private bool IsRightAssociative(char x)
         {
@@ -272,6 +318,5 @@ namespace CptS321
                 return false;
             }
         }
-       
     }
 }

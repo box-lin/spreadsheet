@@ -139,6 +139,5 @@ namespace CptS321.Tests
             ExpressionTree exp = new ExpressionTree(expression);
             return exp.Evaluate();
         }
-
     }
 }

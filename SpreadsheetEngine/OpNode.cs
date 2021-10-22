@@ -26,6 +26,11 @@ namespace CptS321
         }
 
         /// <summary>
+        /// Gets the operator.
+        /// </summary>
+        public static char Operator { get; }
+
+        /// <summary>
         /// Gets the precedence of the operator.
         /// </summary>
         public abstract int Precedence { get; }

@@ -26,6 +26,7 @@ namespace CptS321.Tests
         {
             this.factory = new OpNodeFactory();
         }
+
         /*
         /// <summary>
         /// Test InitOp if all current exist operator objects have been filled into the dictionary.
@@ -72,6 +73,7 @@ namespace CptS321.Tests
             Assert.That(actualSum, Is.EqualTo(expectSum), "The InitOp doesn't cover all the op classes that currently provided in the namespace.");
         }
         */
+
         /// <summary>
         /// Test the correctness operator object that CreateOperatorNode method returns.
         /// </summary>

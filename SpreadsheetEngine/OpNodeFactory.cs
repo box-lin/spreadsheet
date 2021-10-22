@@ -54,7 +54,7 @@ namespace CptS321
                 }
             }
 
-            throw new Exception("Unsupported operator");
+            throw new NotSupportedException("Not Supported Operator");
         }
 
         /// <summary>

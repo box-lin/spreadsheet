@@ -25,7 +25,7 @@ namespace CptS321
         /// <summary>
         /// Gets operator symbol.
         /// </summary>
-        public static char Operator => '/';
+        public static new char Operator => '/';
 
         /// <summary>
         /// Gets the precedance level.
