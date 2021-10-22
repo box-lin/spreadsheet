@@ -58,17 +58,23 @@ namespace CptS321
             var postfixList = this.GetPostfixList(expression);
             Stack<Node> stack = new Stack<Node>();
 
+            // Read the elements in post fix order.
             foreach (var item in postfixList)
             {
+                // if the element is length 1, since (,) are not include in postlist, check if it is a op.
                 if (item.Length == 1 && this.IsParenthesisOrOp(item[0]))
                 {
+                    // create the op node.
                     OpNode node = this.factory.CreateOperatorNode(item[0]);
                     node.Right = stack.Pop();
                     node.Left = stack.Pop();
+
+                    // node has its right and left childeren setup, prepare for another pop.
                     stack.Push(node);
                 }
                 else
                 {
+                    // not a op, prepare them into the stack, when later encounter op, pop two each time for op's left and right node.
                     double num = 0.0;
                     if (double.TryParse(item, out num))
                     {
@@ -129,25 +135,15 @@ namespace CptS321
                     else if (this.IsLowerPrecedence(c, stack.Peek()) ||
                         (this.IsSamePrecedence(c, stack.Peek()) && this.IsLeftAssociative(c)))
                     {
+                        // Stack not empty && Stack peek is a operator && the c and stack peek precedence check.
                         while (stack.Count > 0 && this.factory.IsOperator(stack.Peek())
-                            && (this.IsLowerPrecedence(c, stack.Peek())
-                            || (this.IsSamePrecedence(c, stack.Peek()) && this.IsLeftAssociative(c))))
+                            && (this.IsLowerPrecedence(c, stack.Peek()) || (this.IsSamePrecedence(c, stack.Peek()) && this.IsLeftAssociative(c))))
                         {
                             char op = stack.Pop();
                             postfixList.Add(op.ToString());
                         }
 
                         stack.Push(c);
-
-                        //char top = stack.Pop();
-
-                        //// since the stack top op has the higher precedence, we add it to the list first.
-                        //postfixList.Add(top.ToString());
-
-                        //// We want to keep discover as far as deep in the stack with the c, since loop i++, we make it i--, cur c == next c.
-                        //// So that we can keep compare the precedance levels between c and the ops in the stack.
-                        //// We can do it in while loop but in case (x+y-z)+d we need to measure the occurance of (, since stack contains[ops,'(', ')'].
-                        //i--;
                     }
                 }
 
@@ -181,7 +177,8 @@ namespace CptS321
                     string variable = c.ToString();
                     for (int j = i + 1; j < expression.Length; j++)
                     {
-                        if (!this.factory.IsOperator(expression[j]))
+                        // check again not a (, ), or op, then it is part of variable.
+                        if (!this.IsParenthesisOrOp(expression[j]))
                         {
                             variable += expression[j].ToString();
                             i++;
@@ -212,8 +209,7 @@ namespace CptS321
         /// <returns> true or false. </returns>
         private bool IsParenthesisOrOp(char c)
         {
-            OpNodeFactory fac = new OpNodeFactory();
-            if (c == '(' || c == ')' || fac.IsOperator(c))
+            if (c.Equals('(') || c.Equals(')') || this.factory.IsOperator(c))
             {
                 return true;
             }

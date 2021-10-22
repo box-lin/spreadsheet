@@ -25,22 +25,6 @@ namespace CptS321
             Left,
         }
 
-        /*
-        /// <summary>
-        /// Gets the operator.
-        /// </summary>
-        public static char Operator { get; }
-
-        /// <summary>
-        /// Gets the precedence of the operator.
-        /// </summary>
-        public abstract int Precedence { get; }
-
-        /// <summary>
-        /// Gets the associativity of the operator.
-        /// </summary>
-        public abstract Associative Associativity { get; }*/
-
         /// <summary>
         /// Gets or sets the left node.
         /// </summary>
