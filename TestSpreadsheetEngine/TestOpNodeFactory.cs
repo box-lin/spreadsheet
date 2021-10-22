@@ -16,63 +16,29 @@ namespace CptS321.Tests
     [TestFixture]
     public class TestOpNodeFactory
     {
-        private OpNodeFactory factory;
+        private OpNodeFactory factory = new OpNodeFactory();
 
-        /// <summary>
-        /// Setup the factory.
-        /// </summary>
-        [SetUp]
-        public void SetUp()
-        {
-            this.factory = new OpNodeFactory();
-        }
-
-        /*
         /// <summary>
         /// Test InitOp if all current exist operator objects have been filled into the dictionary.
         /// </summary>
         [Test]
         public void TestInitOp()
         {
-
-            HashSet<char> opSet = new HashSet<char> { '+', '-', '/', '*'};
-            int expectSum = opSet.Count;
-            int actualSum = 0;
-            foreach (char key in this.factory.Op.Keys)
-            {
-                if (opSet.Contains(key))
-                {
-                    opSet.Remove(key);
-                    actualSum++;
-                }
-            }
-
-            Assert.That(actualSum, Is.EqualTo(expectSum), "The InitOp doesn't cover all the op classes that currently provided in the namespace.");
+            List<char> expectList = new List<char> { '+', '-', '/', '*' };
+            CollectionAssert.AreEquivalent(expectList, this.factory.GetOperators());
         }
 
         /// <summary>
-        /// Test InitOp if all current exist operator objects have been filled into the dictionary.
+        /// Test InitOp for operator that from outside project.
         /// </summary>
         [Test]
         public void TestInitOpWithAssembly()
         {
             Assembly.Load("OperatorLibrary-ForTests");
             OpNodeFactory fact = new OpNodeFactory();
-            HashSet<char> opSet = new HashSet<char> { '+', '-', '/', '*', '^' };
-            int expectSum = opSet.Count;
-            int actualSum = 0;
-            foreach (char key in fact.Op.Keys)
-            {
-                if (opSet.Contains(key))
-                {
-                    opSet.Remove(key);
-                    actualSum++;
-                }
-            }
-
-            Assert.That(actualSum, Is.EqualTo(expectSum), "The InitOp doesn't cover all the op classes that currently provided in the namespace.");
+            List<char> expectList = new List<char> { '+', '-', '/', '*', '^' };
+            CollectionAssert.AreEquivalent(expectList, fact.GetOperators());
         }
-        */
 
         /// <summary>
         /// Test the correctness operator object that CreateOperatorNode method returns.
@@ -84,6 +50,72 @@ namespace CptS321.Tests
             Assert.That(this.factory.CreateOperatorNode('-'), Is.TypeOf<SubOp>());
             Assert.That(this.factory.CreateOperatorNode('*'), Is.TypeOf<MulOp>());
             Assert.That(this.factory.CreateOperatorNode('/'), Is.TypeOf<DivideOp>());
+        }
+
+        /// <summary>
+        /// Test the correctness of GetPrecedence.
+        /// </summary>
+        [Test]
+        public void TestGetPrecedence()
+        {
+            Assert.AreEqual(6, this.factory.GetPrecedance('*'));
+            Assert.AreEqual(6, this.factory.GetPrecedance('/'));
+            Assert.AreEqual(7, this.factory.GetPrecedance('+'));
+            Assert.AreEqual(7, this.factory.GetPrecedance('-'));
+        }
+
+        /// <summary>
+        /// Test the NotSupportException for non-implemented operator.
+        /// </summary>
+        [Test]
+        public void TestGetPrecedenceWithUnknownOperator()
+        {
+            Assert.Throws<NotSupportedException>(() => this.factory.GetPrecedance('`'));
+            Assert.Throws<NotSupportedException>(() => this.factory.GetPrecedance(','));
+        }
+
+        /// <summary>
+        /// Test the Exception operators that did not add precedence.
+        /// </summary>
+        [Test]
+        public void TestGetPrecedenceWithNoPrecedenceOperator()
+        {
+            Assembly.Load("OperatorLibrary-ForTests");
+            OpNodeFactory fact = new OpNodeFactory();
+            Assert.Throws<Exception>(() => fact.GetPrecedance('^'));
+        }
+
+        /// <summary>
+        /// Test the correness of GetAssociativity.
+        /// </summary>
+        [Test]
+        public void TestGetAssociativity()
+        {
+            Assert.AreEqual(OpNode.Associative.Left, this.factory.GetAssociativity('*'));
+            Assert.AreEqual(OpNode.Associative.Left, this.factory.GetAssociativity('/'));
+            Assert.AreEqual(OpNode.Associative.Left, this.factory.GetAssociativity('+'));
+            Assert.AreEqual(OpNode.Associative.Left, this.factory.GetAssociativity('-'));
+        }
+
+        /// <summary>
+        /// Test the NotSupportException for non-implemented operator.
+        /// </summary>
+        [Test]
+        public void TestGetAssociativityWithUnknownOperator()
+        {
+            Assert.Throws<NotSupportedException>(() => this.factory.GetAssociativity('`'));
+            Assert.Throws<NotSupportedException>(() => this.factory.GetAssociativity(','));
+        }
+
+        /// <summary>
+        /// Test the Exception operators that did not add Associativity.
+        /// </summary>
+        [Test]
+        public void TestGetPrecedenceWithNoAssociativityOperator()
+        {
+            Assembly.Load("OperatorLibrary-ForTests");
+            OpNodeFactory fact = new OpNodeFactory();
+            Assert.Throws<Exception>(() => fact.GetAssociativity('^'));
         }
 
         /// <summary>

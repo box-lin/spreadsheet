@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CptS321
 {
@@ -55,6 +53,67 @@ namespace CptS321
             }
 
             throw new NotSupportedException("Not Supported Operator");
+        }
+
+        /// <summary>
+        /// Get the operators symbol.
+        /// </summary>
+        /// <returns> A list of operator symbol. </returns>
+        public List<char> GetOperators()
+        {
+            return this.operators.Keys.ToList();
+        }
+
+        /// <summary>
+        /// Get the precedance level for particular operator symbol.
+        /// </summary>
+        /// <param name="symbol"> char symbol. </param>
+        /// <returns> return the Precedance level. </returns>
+        public int GetPrecedance(char symbol)
+        {
+            if (!this.operators.ContainsKey(symbol))
+            {
+                throw new NotSupportedException("Not Supported Operator");
+            }
+
+            var type = this.operators[symbol];
+            PropertyInfo operatorField = type.GetProperty("Precedence");
+            if (operatorField != null)
+            {
+                object value = operatorField.GetValue(type);
+                if (value is int)
+                {
+                    return (int)value;
+                }
+            }
+
+            throw new Exception("No precedence property exist in this operator");
+        }
+
+        /// <summary>
+        /// Get Associativity for the operator symbol.
+        /// </summary>
+        /// <param name="symbol"> operator symbol. </param>
+        /// <returns> The associativity. </returns>
+        public OpNode.Associative GetAssociativity(char symbol)
+        {
+            if (!this.operators.ContainsKey(symbol))
+            {
+                throw new NotSupportedException("Not Supported Operator");
+            }
+
+            var type = this.operators[symbol];
+            PropertyInfo operatorField = type.GetProperty("Associativity");
+            if (operatorField != null)
+            {
+                object value = operatorField.GetValue(type);
+                if (value is OpNode.Associative)
+                {
+                    return (OpNode.Associative)value;
+                }
+            }
+
+            throw new Exception("No Associativity property exist in this operator");
         }
 
         /// <summary>

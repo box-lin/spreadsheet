@@ -226,14 +226,12 @@ namespace CptS321
         /// <summary>
         /// Check if x precedance higher than y.
         /// </summary>
-        /// <param name="x"> char x. </param>
-        /// <param name="y"> char y. </param>
+        /// <param name="cur"> char cur. </param>
+        /// <param name="topOp"> char topOp. </param>
         /// <returns> True or False. </returns>
-        private bool IsHigherPrecedence(char x, char y)
+        private bool IsHigherPrecedence(char cur, char topOp)
         {
-            OpNode cur = this.factory.CreateOperatorNode(x);
-            OpNode topOp = this.factory.CreateOperatorNode(y);
-            if (cur.Precedence < topOp.Precedence)
+            if (this.factory.GetPrecedance(cur) < this.factory.GetPrecedance(topOp))
             {
                 return true;
             }
@@ -246,14 +244,12 @@ namespace CptS321
         /// <summary>
         /// Check if x precedance same as y.
         /// </summary>
-        /// <param name="x"> char x. </param>
-        /// <param name="y"> char y. </param>
+        /// <param name="cur"> char cur. </param>
+        /// <param name="topOp"> char topOp. </param>
         /// <returns> True or False. </returns>
-        private bool IsSamePrecedence(char x, char y)
+        private bool IsSamePrecedence(char cur, char topOp)
         {
-            OpNode cur = this.factory.CreateOperatorNode(x);
-            OpNode topOp = this.factory.CreateOperatorNode(y);
-            if (cur.Precedence == topOp.Precedence)
+            if (this.factory.GetPrecedance(cur) == this.factory.GetPrecedance(topOp))
             {
                 return true;
             }
@@ -266,14 +262,12 @@ namespace CptS321
         /// <summary>
         /// Check if x precedance lower than y.
         /// </summary>
-        /// <param name="x"> char x. </param>
-        /// <param name="y"> char y. </param>
+        /// <param name="cur"> char cur. </param>
+        /// <param name="topOp"> char topOp. </param>
         /// <returns> True or False. </returns>
-        private bool IsLowerPrecedence(char x, char y)
+        private bool IsLowerPrecedence(char cur, char topOp)
         {
-            OpNode cur = this.factory.CreateOperatorNode(x);
-            OpNode topOp = this.factory.CreateOperatorNode(y);
-            if (cur.Precedence > topOp.Precedence)
+            if (this.factory.GetPrecedance(cur) > this.factory.GetPrecedance(topOp))
             {
                 return true;
             }
@@ -286,12 +280,11 @@ namespace CptS321
         /// <summary>
         /// Check if x is associtive left.
         /// </summary>
-        /// <param name="x"> char x. </param>
+        /// <param name="cur"> char cur. </param>
         /// <returns>True or False.  </returns>
-        private bool IsLeftAssociative(char x)
+        private bool IsLeftAssociative(char cur)
         {
-            OpNode cur = this.factory.CreateOperatorNode(x);
-            if (cur.Associativity == OpNode.Associative.Left)
+            if (this.factory.GetAssociativity(cur) == OpNode.Associative.Left)
             {
                 return true;
             }
@@ -304,12 +297,11 @@ namespace CptS321
         /// <summary>
         /// Check if x is associtive left.
         /// </summary>
-        /// <param name="x"> char x. </param>
+        /// <param name="cur"> char cur. </param>
         /// <returns>True or False.  </returns>
-        private bool IsRightAssociative(char x)
+        private bool IsRightAssociative(char cur)
         {
-            OpNode cur = this.factory.CreateOperatorNode(x);
-            if (cur.Associativity == OpNode.Associative.Right)
+            if (this.factory.GetAssociativity(cur) == OpNode.Associative.Right)
             {
                 return true;
             }

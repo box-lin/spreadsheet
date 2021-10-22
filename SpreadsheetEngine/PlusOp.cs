@@ -19,17 +19,17 @@ namespace CptS321
         /// <summary>
         /// Gets the operator symbol.
         /// </summary>
-        public static new char Operator => '+';
+        public static char Operator => '+';
 
         /// <summary>
         /// Gets the precedance level.
         /// </summary>
-        public override int Precedence => 7;
+        public static int Precedence => 7;
 
         /// <summary>
         /// Gets the associativity.
         /// </summary>
-        public override Associative Associativity => Associative.Left;
+        public static Associative Associativity => Associative.Left;
 
         /// <summary>
         /// Evaluate the plus operation from left and right substrees.

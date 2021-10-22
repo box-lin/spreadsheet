@@ -9,9 +9,9 @@ namespace OperatorLibrary_ForTests
 {
     public class PowOp : OpNode
     {
-        public static new char Operator => '^';
-        public override Associative Associativity => Associative.Right;
-        public override int Precedence => 2;
+        public static char Operator => '^';
+        //public static Associative Associativity => Associative.Right;
+        //public static int Precedence => 2;
 
         public override double Evaluate()
         {

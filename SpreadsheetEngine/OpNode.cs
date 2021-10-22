@@ -25,6 +25,7 @@ namespace CptS321
             Left,
         }
 
+        /*
         /// <summary>
         /// Gets the operator.
         /// </summary>
@@ -38,7 +39,7 @@ namespace CptS321
         /// <summary>
         /// Gets the associativity of the operator.
         /// </summary>
-        public abstract Associative Associativity { get; }
+        public abstract Associative Associativity { get; }*/
 
         /// <summary>
         /// Gets or sets the left node.
