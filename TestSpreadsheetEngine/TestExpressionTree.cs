@@ -101,13 +101,86 @@ namespace CptS321.Tests
         /// </summary>
         /// <param name="expression"> string expression. </param>
         [TestCase("A5+C9+D5")]
-        public void SetVariableMultiply(string expression)
+        public void SetVariableMultiple(string expression)
         {
             ExpressionTree exp = new ExpressionTree(expression);
             exp.SetVariable("A5", 5);
             exp.SetVariable("C9", 2);
             exp.SetVariable("D5", 3);
             Assert.AreEqual(exp.Evaluate(), 10);
+        }
+
+        /// <summary>
+        /// Test the precedance between operators.
+        /// </summary>
+        /// <param name="expression"> expression. </param>
+        /// <returns> evaluated result. </returns>
+        [Test]
+        [TestCase("5+20*5", ExpectedResult = 105)]
+        [TestCase("5-20/10", ExpectedResult = 3)]
+        [TestCase("10*5+2*3", ExpectedResult = 56)]
+        [TestCase("1+2+3+4*2+5+6/2-3+2+9*1*2", ExpectedResult = 39)]
+        public double TestPrecedanceOperation(string expression)
+        {
+            ExpressionTree exp = new ExpressionTree(expression);
+            return exp.Evaluate();
+        }
+
+        /// <summary>
+        /// Test the precedance for parenthesis.
+        /// </summary>
+        /// <param name="expression"> expression. </param>
+        /// <returns> evaluated result. </returns>
+        [Test]
+        [TestCase("5*(2+3)+2", ExpectedResult = 27)]
+        [TestCase("((((3))))", ExpectedResult = 3)]
+        [TestCase("(7+2-1+1)*2", ExpectedResult = 18)]
+        [TestCase("(7+2-1+1*5+1)*(2+3)*2", ExpectedResult = 140)]
+        [TestCase("(7+2-1+1*5+1)*(2+3)*(9-2+2/2-3*1)", ExpectedResult = 350)]
+        public double TestParenthesisOperation(string expression)
+        {
+            ExpressionTree exp = new ExpressionTree(expression);
+            return exp.Evaluate();
+        }
+
+        /// <summary>
+        /// Test the precedance operation with variables involved.
+        /// </summary>
+        /// <param name="expression"> expression. </param>
+        /// <returns> evaluated result. </returns>
+        [Test]
+        [TestCase("A1+B2+C3+D4*2+E5+A2/2-A3+2+A4*1*2", ExpectedResult = 39)]
+        public double TestPrecedanceOperationWithVariables(string expression)
+        {
+            ExpressionTree exp = new ExpressionTree(expression);
+            exp.SetVariable("A1", 1);
+            exp.SetVariable("B2", 2);
+            exp.SetVariable("C3", 3);
+            exp.SetVariable("D4", 4);
+            exp.SetVariable("E5", 5);
+            exp.SetVariable("A2", 6);
+            exp.SetVariable("A3", 3);
+            exp.SetVariable("A4", 9);
+            return exp.Evaluate();
+        }
+
+        /// <summary>
+        /// Test the parenthesis and precedance operation with variables involved.
+        /// </summary>
+        /// <param name="expression"> expression. </param>
+        /// <returns> evaluated result. </returns>
+        [Test]
+        [TestCase("(7+2-1+1*A1+1)*(B2+C3)*(9-2+E5/2-D4*1)", ExpectedResult = 350)]
+        [TestCase("A1*(B2+C3)+(E5/B2)+D4", ExpectedResult = 29)]
+        public double TestParenthesisOperationWithVarriables(string expression)
+        {
+            ExpressionTree exp = new ExpressionTree(expression);
+            exp.SetVariable("A1", 5);
+            exp.SetVariable("B2", 2);
+            exp.SetVariable("C3", 3);
+            exp.SetVariable("D4", 3);
+            exp.SetVariable("E5", 2);
+            return exp.Evaluate();
         }
     }
 }

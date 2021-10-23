@@ -8,7 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8EDF4429-251A-416D-BB68-93F227191BCF}</ProjectGuid>
     <OutputType>Library</OutputType>
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TestSpreadsheetEngine</RootNamespace>
     <AssemblyName>TestSpreadsheetEngine</AssemblyName>
@@ -25,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\TestSpreadsheetEngine.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,6 +44,7 @@
   <ItemGroup>
     <Compile Include="TestCell.cs" />
     <Compile Include="TestExpressionTree.cs" />
+    <Compile Include="TestOpNodeFactory.cs" />
     <Compile Include="TestSpreadsheet.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -50,6 +52,10 @@
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OperatorLibrary-ForTests\OperatorLibrary-ForTests.csproj">
+      <Project>{b8098de5-98af-4288-9c7d-dc880498b6cf}</Project>
+      <Name>OperatorLibrary-ForTests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SpreadsheetEngine\SpreadsheetEngine.csproj">
       <Project>{cfcdcec2-ff0d-46e6-8234-65bfb9dc33a7}</Project>
       <Name>SpreadsheetEngine</Name>

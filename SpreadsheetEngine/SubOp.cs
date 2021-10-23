@@ -24,12 +24,12 @@ namespace CptS321
         /// <summary>
         /// Gets the precedance level.
         /// </summary>
-        public static ushort Precedance => 7;
+        public static int Precedence => 7;
 
         /// <summary>
         /// Gets the associativity.
         /// </summary>
-        public static Associative Associtivity => Associative.Left;
+        public static Associative Associativity => Associative.Left;
 
         /// <summary>
         /// Evaluate the subtract operation from left and right substrees.
