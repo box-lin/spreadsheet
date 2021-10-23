@@ -220,7 +220,7 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Check if x precedance higher than y.
+        /// Check if cur precedance higher than top of the stack.
         /// </summary>
         /// <param name="cur"> char cur. </param>
         /// <param name="topOp"> char topOp. </param>
@@ -238,7 +238,7 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Check if x precedance same as y.
+        /// Check if cur precedance same as top of the stack.
         /// </summary>
         /// <param name="cur"> char cur. </param>
         /// <param name="topOp"> char topOp. </param>
@@ -256,7 +256,7 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Check if x precedance lower than y.
+        /// Check if cur precedance lower than top of the stack.
         /// </summary>
         /// <param name="cur"> char cur. </param>
         /// <param name="topOp"> char topOp. </param>
@@ -274,7 +274,7 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Check if x is associtive left.
+        /// Check if char cur corresponding op is associtive left.
         /// </summary>
         /// <param name="cur"> char cur. </param>
         /// <returns>True or False.  </returns>
@@ -291,7 +291,7 @@ namespace CptS321
         }
 
         /// <summary>
-        /// Check if x is associtive left.
+        /// Check if char cur corresponding op is associtive left.
         /// </summary>
         /// <param name="cur"> char cur. </param>
         /// <returns>True or False.  </returns>
