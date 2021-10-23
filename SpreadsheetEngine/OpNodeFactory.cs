@@ -121,7 +121,7 @@ namespace CptS321
         /// </summary>
         /// <param name="op">Operator char.</param>
         /// <returns>Boolean.</returns>
-        internal bool IsOperator(char op)
+        public bool IsOperator(char op)
         {
             return this.operators.ContainsKey(op);
         }

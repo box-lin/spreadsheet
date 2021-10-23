@@ -127,5 +127,29 @@ namespace CptS321.Tests
             Assert.Throws<NotSupportedException>(() => this.factory.CreateOperatorNode('%'));
             Assert.Throws<NotSupportedException>(() => this.factory.CreateOperatorNode('$'));
         }
+
+        /// <summary>
+        /// Test if the input char is a supported operator.
+        /// </summary>
+        [Test]
+        public void TestIsOperatorWithSupportedOps()
+        {
+            Assert.AreEqual(true, this.factory.IsOperator('*'));
+            Assert.AreEqual(true, this.factory.IsOperator('/'));
+            Assert.AreEqual(true, this.factory.IsOperator('+'));
+            Assert.AreEqual(true, this.factory.IsOperator('-'));
+        }
+
+        /// <summary>
+        /// Test if the input char is not asupported operator.
+        /// </summary>
+        [Test]
+        public void TestIsOperatorWithNotSupportedOps()
+        {
+            Assert.AreEqual(false, this.factory.IsOperator('$'));
+            Assert.AreEqual(false, this.factory.IsOperator('#'));
+            Assert.AreEqual(false, this.factory.IsOperator('%'));
+            Assert.AreEqual(false, this.factory.IsOperator('?'));
+        }
     }
 }
