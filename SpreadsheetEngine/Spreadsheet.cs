@@ -92,7 +92,7 @@ namespace SpreadsheetEngine
                     this.Cells[i, j] = new TheCell(i, colIndex);
 
                     // The spreadsheet class has to subscribe to all the PropertyChanged events
-                    this.Cells[i, j].PropertyChanged += this.PropertyChanged;
+                    this.Cells[i, j].PropertyChanged += this.OnCellPropertyChanged;
                 }
             }
         }
@@ -102,54 +102,42 @@ namespace SpreadsheetEngine
         /// </summary>
         /// <param name="sender"> Object. </param>
         /// <param name="e"> Event. </param>
-        private void PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Text")
             {
                 TheCell curCell = (TheCell)sender;
+                string newVal = curCell.Text;
 
                 // For formula.
                 if (curCell.Text[0] == '=')
                 {
-                    this.ApplyFormula(curCell);
+                    newVal = this.EvaluateExpression(curCell);
                 }
-                else
-                {
-                    // For just text.
-                    curCell.SetValue(curCell.Text);
-                    this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
-                }
+
+                // For just text.
+                curCell.SetValue(newVal);
+                this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
             }
         }
 
         /// <summary>
-        /// When input text start with '=' we apply formulas.
-        /// **NOTE:** the below only handle the formula for copy values.
+        /// Evaluate the formula expression in a cell.
         /// </summary>
         /// <param name="curCell"> TheCell object. </param>
-        private void ApplyFormula(TheCell curCell)
+        /// <returns> Return the string evaluated result. </returns>
+        private string EvaluateExpression(TheCell curCell)
         {
-            // The inputCellName assuming [A~Z][Digits] = [Col][Row].
-            string inputCellName = curCell.Text.Substring(1);
+            string expression = curCell.Text.Substring(1);
+            
+            // ExpressionTree gets build
+            ExpressionTree expTree = new ExpressionTree(expression);
+            return expTree.Evaluate().ToString();
+        }
 
-            int col = (int)inputCellName[0] - 'A';
+        private void GetVariableCell(ExpressionTree expTree, TheCell cell)
+        {
 
-            // the rowindex start at 0.
-            int row = int.Parse(inputCellName.Substring(1));
-
-            Cell target = this.GetCell(row, col);
-
-            // if target cell exsited copy its text.
-            if (target != null)
-            {
-                curCell.SetValue(target.Text);
-                this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
-            }
-            else
-            {
-                curCell.SetValue("null");
-                this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
-            }
         }
 
         /// <summary>

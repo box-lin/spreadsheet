@@ -18,12 +18,20 @@ namespace CptS321
         private OpNodeFactory factory;
 
         /// <summary>
+        /// This help locate the varibale name in the expression tree.
+        /// Since the variable dictionary not setup with infos before any setvariable gets call, keys empty
+        /// while we type into the Excel cell.
+        /// </summary>
+        private HashSet<string> variableNames;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionTree"/> class.
         /// </summary>
         /// <param name="expression"> input expression. </param>
         public ExpressionTree(string expression)
         {
             this.variables = new Dictionary<string, double>();
+            this.variableNames = new HashSet<string>();
             this.factory = new OpNodeFactory();
             this.root = this.BuildExpTree(expression);
         }
@@ -45,6 +53,15 @@ namespace CptS321
         public void SetVariable(string variableName, double variableValue)
         {
             this.variables[variableName] = variableValue;
+        }
+
+        /// <summary>
+        /// Get all the variable names.
+        /// </summary>
+        /// <returns> all variable name in a list. </returns>
+        public HashSet<string> GetAllVariableName()
+        {
+            return this.variableNames;
         }
 
         /// <summary>
@@ -82,6 +99,7 @@ namespace CptS321
                     }
                     else
                     {
+                        this.variableNames.Add(item);
                         stack.Push(new VariableNode(item, ref this.variables));
                     }
                 }

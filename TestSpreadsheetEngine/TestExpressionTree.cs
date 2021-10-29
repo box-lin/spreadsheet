@@ -3,6 +3,7 @@
 // </copyright>
 using CptS321;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace CptS321.Tests
 {
@@ -181,6 +182,18 @@ namespace CptS321.Tests
             exp.SetVariable("D4", 3);
             exp.SetVariable("E5", 2);
             return exp.Evaluate();
+        }
+
+        /// <summary>
+        /// Test the GetAllVariableName.
+        /// </summary>
+        [Test]
+        public void TestGetAllVariableName()
+        {
+            ExpressionTree exp = new ExpressionTree("F2+D2*C1+A1");
+            HashSet<string> varibalNames = new HashSet<string> { "A1", "C1", "D2", "F2" };
+
+            CollectionAssert.AreEquivalent(varibalNames, exp.GetAllVariableName());
         }
     }
 }
