@@ -25,6 +25,8 @@ namespace Spreadsheet_Boxiang_Lin
             this.InitializeComponent();
             this.spreadsheet = new Spreadsheet(50, 26);
             this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
+            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
+            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
         }
 
         /// <summary>
@@ -53,6 +55,43 @@ namespace Spreadsheet_Boxiang_Lin
 
                 // curCell val get set in Spreadsheet.
                 this.dataGridView1.Rows[curCell.RowIndex].Cells[col].Value = curCell.Value;
+            }
+        }
+
+        /// <summary>
+        /// BeginEdit event handler.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void DataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            int row = e.RowIndex;
+            int col = e.ColumnIndex;
+            Cell cell = this.spreadsheet.GetCell(row, col);
+
+            // Get the selected cell.
+            DataGridViewCell dataCell = this.dataGridView1.Rows[row].Cells[col];
+
+            // value match to cell text property.
+            dataCell.Value = cell.Text;
+        }
+
+        /// <summary>
+        /// EndEdit event handler.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void DataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            int row = e.RowIndex;
+            int col = e.ColumnIndex;
+            Cell cell = this.spreadsheet.GetCell(row, col);
+            DataGridViewCell dataCell = this.dataGridView1.Rows[row].Cells[col];
+            if (dataCell.Value != null)
+            {
+                string update = dataCell.Value.ToString();
+                cell.Text = update;
+                dataCell.Value = cell.Value;
             }
         }
 
