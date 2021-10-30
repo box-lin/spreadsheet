@@ -1,9 +1,9 @@
 ﻿// <copyright file="TestExpressionTree.cs" company="Boxiang Lin - WSU 011601661">
 // Copyright (c) Boxiang Lin - WSU 011601661. All rights reserved.
 // </copyright>
+using System.Collections.Generic;
 using CptS321;
 using NUnit.Framework;
-using System.Collections.Generic;
 
 namespace CptS321.Tests
 {
@@ -19,8 +19,8 @@ namespace CptS321.Tests
         /// <param name="expression"> expression to be evaluate. </param>
         /// <returns> result. </returns>
         [Test]
-        [TestCase("3+5", ExpectedResult = 8.0)]
-        [TestCase("3+5+10", ExpectedResult = 18.0)]
+        [TestCase("3+5.9", ExpectedResult = 8.9)]
+        [TestCase("3+5.2+10", ExpectedResult = 18.2)]
         [TestCase("0+0", ExpectedResult = 0.0)]
         public double TestEvaluateAdd(string expression)
         {
@@ -34,8 +34,8 @@ namespace CptS321.Tests
         /// <param name="expression"> expression to be evaluate. </param>
         /// <returns> result. </returns>
         [Test]
-        [TestCase("50-5", ExpectedResult = 45.0)]
-        [TestCase("50-5-10", ExpectedResult = 35.0)]
+        [TestCase("50.5-5", ExpectedResult = 45.5)]
+        [TestCase("50-5-10.2", ExpectedResult = 34.8)]
         [TestCase("0-0", ExpectedResult = 0.0)]
         public double TestEvaluateSub(string expression)
         {
@@ -106,9 +106,9 @@ namespace CptS321.Tests
         {
             ExpressionTree exp = new ExpressionTree(expression);
             exp.SetVariable("A5", 5);
-            exp.SetVariable("C9", 2);
+            exp.SetVariable("C9", 2.1);
             exp.SetVariable("D5", 3);
-            Assert.AreEqual(exp.Evaluate(), 10);
+            Assert.AreEqual(exp.Evaluate(), 10.1);
         }
 
         /// <summary>
@@ -192,6 +192,18 @@ namespace CptS321.Tests
         {
             ExpressionTree exp = new ExpressionTree("F2+D2*C1+A1");
             HashSet<string> varibalNames = new HashSet<string> { "A1", "C1", "D2", "F2" };
+
+            CollectionAssert.AreEquivalent(varibalNames, exp.GetAllVariableName());
+        }
+
+        /// <summary>
+        /// Test the Distinct Variable Name.
+        /// </summary>
+        [Test]
+        public void TestGetAllVariableNameDistinct()
+        {
+            ExpressionTree exp = new ExpressionTree("F2+D2*F2+A1");
+            HashSet<string> varibalNames = new HashSet<string> { "A1", "D2", "F2" };
 
             CollectionAssert.AreEquivalent(varibalNames, exp.GetAllVariableName());
         }

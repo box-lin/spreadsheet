@@ -162,7 +162,12 @@ namespace SpreadsheetEngine
             {
                 // Get the reference cell.
                 TheCell refCell = this.GetCellByName(cellname);
-                if (currCell == refCell)
+                if (refCell == null)
+                {
+                    currCell.SetValue("Out Of Range");
+                    return true;
+                }
+                else if (currCell == refCell)
                 {
                     currCell.SetValue("Self Reference LATER");
                     return true;

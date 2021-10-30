@@ -68,7 +68,6 @@ namespace Spreadsheet_Boxiang_Lin
             int row = e.RowIndex;
             int col = e.ColumnIndex;
 
-
             Cell cell = this.spreadsheet.GetCell(row, col);
 
             // Get the selected cell.
@@ -123,7 +122,6 @@ namespace Spreadsheet_Boxiang_Lin
             {
                 // location 0<=row<50, 2<=col<26 where row and col start at 0 as in cell 2D array.
                 this.spreadsheet.Cells[random.Next(0, 50), random.Next(2, 26)].Text = "I love C#";
-
             }
         }
 

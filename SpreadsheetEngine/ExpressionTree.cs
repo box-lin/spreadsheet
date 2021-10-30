@@ -169,12 +169,18 @@ namespace CptS321
                 else if (char.IsDigit(c))
                 {
                     string constant = c.ToString();
+                    int count = 0;
 
                     // we have to loop throup all consecutive constant number.
                     for (int j = i + 1; j < expression.Length; j++)
                     {
-                        if (char.IsDigit(expression[j]))
+                        if ((char.IsDigit(expression[j]) || expression[j] == '.') && count <= 1)
                         {
+                            if (expression[j] == '.')
+                            {
+                                count++;
+                            }
+
                             constant += expression[j].ToString();
 
                             // update the i counter as well since we have ealier process some consecutive constants.
