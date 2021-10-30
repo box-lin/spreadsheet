@@ -174,11 +174,16 @@ namespace CptS321
                     // we have to loop throup all consecutive constant number.
                     for (int j = i + 1; j < expression.Length; j++)
                     {
-                        if ((char.IsDigit(expression[j]) || expression[j] == '.') && count <= 1)
+                        if (char.IsDigit(expression[j]) || expression[j] == '.')
                         {
                             if (expression[j] == '.')
                             {
                                 count++;
+                            }
+
+                            if (count > 1)
+                            {
+                                throw new FormatException("Illegal Number");
                             }
 
                             constant += expression[j].ToString();

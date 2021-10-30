@@ -162,6 +162,7 @@ namespace SpreadsheetEngine
             {
                 // Get the reference cell.
                 TheCell refCell = this.GetCellByName(cellname);
+
                 if (refCell == null)
                 {
                     currCell.SetValue("Out Of Range");
