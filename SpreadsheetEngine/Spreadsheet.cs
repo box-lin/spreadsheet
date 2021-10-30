@@ -5,9 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CptS321;
 
 namespace SpreadsheetEngine
@@ -18,11 +15,12 @@ namespace SpreadsheetEngine
     public class Spreadsheet
     {
         /// <summary>
-        /// Public Required 2D Array stored the cells.
+        /// 2D Array stored the cells.
         /// </summary>
-        #pragma warning disable SA1401 // Fields should be public so can be use in Form1.cs
-        public Cell[,] Cells;
-        #pragma warning restore SA1401
+#pragma warning disable SA1401 // Public as PDF instruction.
+        public TheCell[,] Cells;
+#pragma warning restore SA1401 // Public as PDF instruction.
+
         private int columnCount;
         private int rowCount;
 
@@ -41,7 +39,7 @@ namespace SpreadsheetEngine
         /// <summary>
         /// CellPropertyChanged Event Handler.
         /// </summary>
-        public event PropertyChangedEventHandler CellPropertyChanged = (sender, e) => { };
+        public event PropertyChangedEventHandler CellPropertyChanged;
 
         /// <summary>
         /// Gets the columnCount.
@@ -71,7 +69,7 @@ namespace SpreadsheetEngine
         /// <param name="row"> row. </param>
         /// <param name="col"> col. </param>
         /// <returns> Specific Cell. </returns>
-        public Cell GetCell(int row, int col)
+        public TheCell GetCell(int row, int col)
         {
             return row >= 0 && row < this.rowCount && col >= 0 && col < this.rowCount ? this.Cells[row, col] : null;
         }
@@ -83,85 +81,126 @@ namespace SpreadsheetEngine
         /// <param name="col"> column number. </param>
         private void CellsInit(int row, int col)
         {
-            this.Cells = new Cell[row, col];
+            this.Cells = new TheCell[row, col];
             for (int i = 0; i < row; i++)
             {
                 for (int j = 0; j < col; j++)
                 {
                     char colIndex = (char)('A' + j);
-                    this.Cells[i, j] = new TheCell(i, colIndex);
-
-                    // The spreadsheet class has to subscribe to all the PropertyChanged events
-                    this.Cells[i, j].PropertyChanged += this.OnCellPropertyChanged;
+                    TheCell cell = new TheCell(i, colIndex);
+                    this.Cells[i, j] = cell;
+                    cell.PropertyChanged += this.OnCellPropertyChanged;
+                    cell.RefCellValueChanged += this.OnRefCellValueChanged;
                 }
             }
         }
 
         /// <summary>
-        /// Handler the event if Cell.text changed.
+        /// Cell property event listener. Update the value when text property get changed.
         /// </summary>
-        /// <param name="sender"> Object. </param>
-        /// <param name="e"> Event. </param>
+        /// <param name="sender"> object.</param>
+        /// <param name="e"> event.</param>
         private void OnCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Text")
+            if (e.PropertyName.Equals("Text"))
             {
-                TheCell curCell = (TheCell)sender;
-                string newVal = curCell.Text;
+                this.SetCellValue(sender as TheCell);
+            }
+        }
 
-                // For formula.
-                if (curCell.Text[0] == '=')
+        /// <summary>
+        /// Reference cell event listener. Update value as ref cell property changes.
+        /// </summary>
+        /// <param name="sender">Ref cell.</param>
+        /// <param name="e">Event.</param>
+        private void OnRefCellValueChanged(object sender, EventArgs e)
+        {
+            this.SetCellValue(sender as TheCell);
+        }
+
+        /// <summary>
+        /// <Helper> Set the cell value and if do the expression computation. </Helper>
+        /// Case 1: If start with =, use expression tree to evaluate the result.
+        /// Case 2: Not start with =, just set text to value.
+        /// </summary>
+        /// <param name="cell">Spreadsheet cell.</param>
+        private void SetCellValue(TheCell cell)
+        {
+            string newValue = cell.Text;
+
+            if (newValue.StartsWith("="))
+            {
+                // remove = and whitespaces
+                string expression = cell.Text.Substring(1).Replace(" ", string.Empty);
+                ExpressionTree exp = new ExpressionTree(expression);
+                bool error = this.SetVariable(exp, cell);
+                if (!error)
                 {
-                    newVal = this.EvaluateExpression(curCell);
+                    newValue = exp.Evaluate().ToString();
                 }
-
-                // For just text.
-                curCell.SetValue(newVal);
-                this.CellPropertyChanged(curCell, new PropertyChangedEventArgs("Value"));
+                else
+                {
+                    newValue = cell.Value;
+                }
             }
+
+            cell.SetValue(newValue);
+            this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
         }
 
         /// <summary>
-        /// Evaluate the formula expression in a cell.
+        /// Variable in the Expression tree set with value according to the ref cell.
         /// </summary>
-        /// <param name="curCell"> TheCell object. </param>
-        /// <returns> Return the string evaluated result. </returns>
-        private string EvaluateExpression(TheCell curCell)
+        /// <param name="exp"> ExpressionTree. </param>
+        /// <param name="currCell"> current cell.</param>
+        /// <returns> error or no error. </returns>
+        private bool SetVariable(ExpressionTree exp, TheCell currCell)
         {
-            string expression = curCell.Text.Substring(1);
-            
-            // ExpressionTree gets build
-            ExpressionTree expTree = new ExpressionTree(expression);
-            return expTree.Evaluate().ToString();
-        }
+            // all variable names captured during the construction of expression tree.
+            HashSet<string> variableNames = exp.GetAllVariableName();
+            foreach (string cellname in variableNames)
+            {
+                // Get the reference cell.
+                TheCell refCell = this.GetCellByName(cellname);
+                if (currCell == refCell)
+                {
+                    currCell.SetValue("Self Reference LATER");
+                    return true;
+                }
+                else
+                {
+                    double num = 0.0;
+                    if (double.TryParse(refCell.Value, out num))
+                    {
+                        num = double.Parse(refCell.Value);
+                    }
 
-        private void GetVariableCell(ExpressionTree expTree, TheCell cell)
-        {
+                    exp.SetVariable(cellname, num);
+                    currCell.SubToCellPropertyChange(refCell);
+                }
+            }
 
+            return false;
         }
 
         /// <summary>
-        /// Private class inherited from abstract class Cell.
+        /// As required, valName = [char][digit].
         /// </summary>
-        private class TheCell : Cell
+        /// <param name="valName"> char++digit. </param>
+        /// <returns> a specific TheCell object in our 2D storage. </returns>
+        private TheCell GetCellByName(string valName)
         {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="TheCell"/> class.
-            /// </summary>
-            /// <param name="rowIndex"> row index. </param>
-            /// <param name="colIndex"> column index. </param>
-            public TheCell(int rowIndex, char colIndex)
-                : base(rowIndex, colIndex)
+            try
             {
+                char col = valName[0];
+                string row = valName.Substring(1);
+                int colIndex = col - 'A';
+                int rowIndex = int.Parse(row) - 1;
+                return this.GetCell(rowIndex, colIndex);
             }
-
-            /// <summary>
-            /// Set the value.
-            /// </summary>
-            /// <param name="value"> string value. </param>
-            public void SetValue(string value)
+            catch
             {
-                this.value = value;
+                return null;
             }
         }
     }

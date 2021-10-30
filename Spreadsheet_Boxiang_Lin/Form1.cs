@@ -15,7 +15,7 @@ namespace Spreadsheet_Boxiang_Lin
     /// </summary>
     public partial class Form1 : Form
     {
-        private readonly Spreadsheet spreadsheet;
+        private Spreadsheet spreadsheet;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Form1"/> class.
@@ -24,9 +24,6 @@ namespace Spreadsheet_Boxiang_Lin
         {
             this.InitializeComponent();
             this.spreadsheet = new Spreadsheet(50, 26);
-            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
-            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
-            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
         }
 
         /// <summary>
@@ -39,6 +36,9 @@ namespace Spreadsheet_Boxiang_Lin
             this.ResetDataGridView();
             this.InitColumns('A', 'Z');
             this.InitRows(1, 50);
+            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
+            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
+            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
         }
 
         /// <summary>
@@ -67,6 +67,8 @@ namespace Spreadsheet_Boxiang_Lin
         {
             int row = e.RowIndex;
             int col = e.ColumnIndex;
+
+
             Cell cell = this.spreadsheet.GetCell(row, col);
 
             // Get the selected cell.
@@ -86,13 +88,15 @@ namespace Spreadsheet_Boxiang_Lin
             int row = e.RowIndex;
             int col = e.ColumnIndex;
             Cell cell = this.spreadsheet.GetCell(row, col);
+
             DataGridViewCell dataCell = this.dataGridView1.Rows[row].Cells[col];
             if (dataCell.Value != null)
             {
                 string update = dataCell.Value.ToString();
                 cell.Text = update;
-                dataCell.Value = cell.Value;
             }
+
+            dataCell.Value = cell.Value;
         }
 
         /// <summary>
@@ -105,8 +109,12 @@ namespace Spreadsheet_Boxiang_Lin
             // To set text for B column and apply formula to map text in B column to A column.
             for (int row = 0; row < this.spreadsheet.RowCount; row++)
             {
-                this.spreadsheet.Cells[row, 1].Text = "This is cell B" + (this.spreadsheet.Cells[row, 1].RowIndex + 1);
-                this.spreadsheet.Cells[row, 0].Text = "=B" + this.spreadsheet.Cells[row, 1].RowIndex;
+                this.spreadsheet.Cells[row, 1].Text = "This is cell B" + (row + 1);
+            }
+
+            for (int row = 0; row < this.spreadsheet.RowCount; row++)
+            {
+                this.spreadsheet.Cells[row, 0].Text = "=B" + (row + 1);
             }
 
             // Random 50 cells text set to "I love C#".
@@ -115,6 +123,7 @@ namespace Spreadsheet_Boxiang_Lin
             {
                 // location 0<=row<50, 2<=col<26 where row and col start at 0 as in cell 2D array.
                 this.spreadsheet.Cells[random.Next(0, 50), random.Next(2, 26)].Text = "I love C#";
+
             }
         }
 

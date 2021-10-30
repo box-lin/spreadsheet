@@ -101,5 +101,15 @@ namespace CptS321
                 return this.value;
             }
         }
+
+        /// <summary>
+        /// Changes string field value to newValue.
+        /// </summary>
+        /// <param name="newValue">New string value.</param>
+        internal void SetValue(string newValue)
+        {
+            this.value = newValue;
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
+        }
     }
 }
