@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using CptS321;
 using SpreadsheetEngine;
@@ -24,6 +25,9 @@ namespace Spreadsheet_Boxiang_Lin
         {
             this.InitializeComponent();
             this.spreadsheet = new Spreadsheet(50, 26);
+            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
+            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
+            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
         }
 
         /// <summary>
@@ -36,9 +40,6 @@ namespace Spreadsheet_Boxiang_Lin
             this.ResetDataGridView();
             this.InitColumns('A', 'Z');
             this.InitRows(1, 50);
-            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
-            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
-            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
         }
 
         /// <summary>
@@ -48,13 +49,17 @@ namespace Spreadsheet_Boxiang_Lin
         /// <param name="e"> Event. </param>
         private void OnCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            TheCell curCell = sender as TheCell;
+            int col = (int)curCell.ColumnIndex - 'A';
+            DataGridViewCell formCell = this.dataGridView1.Rows[curCell.RowIndex].Cells[col];
             if (e.PropertyName == "Value")
             {
-                Cell curCell = (Cell)sender;
-                int col = (int)curCell.ColumnIndex - 'A';
-
-                // curCell val get set in Spreadsheet.
-                this.dataGridView1.Rows[curCell.RowIndex].Cells[col].Value = curCell.Value;
+                formCell.Value = curCell.Value;
+            }
+            else if (e.PropertyName == "BGColor")
+            {
+                Color newColor = Color.FromArgb((int)curCell.BGColor);
+                formCell.Style.BackColor = newColor;
             }
         }
 
@@ -68,7 +73,7 @@ namespace Spreadsheet_Boxiang_Lin
             int row = e.RowIndex;
             int col = e.ColumnIndex;
 
-            Cell cell = this.spreadsheet.GetCell(row, col);
+            TheCell cell = this.spreadsheet.GetCell(row, col);
 
             // Get the selected cell.
             DataGridViewCell dataCell = this.dataGridView1.Rows[row].Cells[col];
@@ -86,7 +91,7 @@ namespace Spreadsheet_Boxiang_Lin
         {
             int row = e.RowIndex;
             int col = e.ColumnIndex;
-            Cell cell = this.spreadsheet.GetCell(row, col);
+            TheCell cell = this.spreadsheet.GetCell(row, col);
 
             DataGridViewCell dataCell = this.dataGridView1.Rows[row].Cells[col];
             if (dataCell.Value != null)
@@ -160,6 +165,25 @@ namespace Spreadsheet_Boxiang_Lin
         {
             this.dataGridView1.CancelEdit();
             this.dataGridView1.Columns.Clear();
+        }
+
+        /// <summary>
+        /// Event handler for click the Change Background Color.
+        /// Select the background color from dialog window.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void ChangeTheColorForAllSelectedCellsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog myDialog = new ColorDialog();
+            if (myDialog.ShowDialog() == DialogResult.OK)
+            {
+                uint newColor = (uint)myDialog.Color.ToArgb();
+                foreach (DataGridViewCell formCell in this.dataGridView1.SelectedCells)
+                {
+                    this.spreadsheet.Cells[formCell.RowIndex, formCell.ColumnIndex].BGColor = newColor;
+                }
+            }
         }
     }
 }

@@ -105,6 +105,9 @@ namespace SpreadsheetEngine
             if (e.PropertyName.Equals("Text"))
             {
                 this.SetCellValue(sender as TheCell);
+            }else if (e.PropertyName.Equals("BGColor"))
+            {
+                this.CellPropertyChanged(sender as TheCell, new PropertyChangedEventArgs("BGColor"));
             }
         }
 
