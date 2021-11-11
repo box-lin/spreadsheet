@@ -188,8 +188,28 @@ namespace Spreadsheet_Boxiang_Lin
                 }
 
                 ColorCommand colorCommand = new ColorCommand(selectedCells, newColor);
-                colorCommand.Execute();
+                this.spreadsheet.NewCommandAdd(colorCommand);
             }
+        }
+
+        /// <summary>
+        /// Undo event handler.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.spreadsheet.RunUndoCommand();
+        }
+
+        /// <summary>
+        /// Redo event handler.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.spreadsheet.RunRedoCommand();
         }
     }
 }

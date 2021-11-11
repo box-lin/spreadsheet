@@ -44,6 +44,8 @@ namespace SpreadsheetEngine
             this.CellsInit(row, col);
             this.columnCount = col;
             this.rowCount = row;
+            this.undos = new Stack<ICommand>();
+            this.redos = new Stack<ICommand>();
         }
 
         /// <summary>
@@ -85,11 +87,43 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
-        /// 
+        /// When brand new command add, redo should be disable.
+        /// By instruction, disable is to make the redo stack empty.
         /// </summary>
-        /// <param name="command"></param>
-        public void PushUndoStack(ICommand command)
+        /// <param name="command"> incoming command. </param>
+        public void NewCommandAdd(ICommand command)
         {
+            this.redos.Clear();
+            command.Execute();
+            this.undos.Push(command);
+        }
+
+        /// <summary>
+        /// Undo Command execution.
+        /// pop the undo stack, unexecute, and push it to redo stack.
+        /// </summary>
+        public void RunUndoCommand()
+        {
+            if (this.undos.Count > 0)
+            {
+                ICommand undoCommand = this.undos.Pop();
+                undoCommand.Unexecute();
+                this.redos.Push(undoCommand);
+            }
+        }
+
+        /// <summary>
+        /// Redo command execution.
+        /// pop the redo stack, execute, and push it to undo stack.
+        /// </summary>
+        public void RunRedoCommand()
+        {
+            if (this.redos.Count > 0)
+            {
+                ICommand redoCommand = this.redos.Pop();
+                redoCommand.Execute();
+                this.undos.Push(redoCommand);
+            }
         }
 
         /// <summary>
