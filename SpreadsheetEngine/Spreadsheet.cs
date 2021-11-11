@@ -25,6 +25,16 @@ namespace SpreadsheetEngine
         private int rowCount;
 
         /// <summary>
+        /// Undo stack to store specic command that implements the ICommand Interface.
+        /// </summary>
+        private Stack<ICommand> undos;
+
+        /// <summary>
+        /// Redo stack to store specifc command that implements the Icoomand Interface.
+        /// </summary>
+        private Stack<ICommand> redos;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
         /// </summary>
         /// <param name="row"> row number. </param>
@@ -75,6 +85,14 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="command"></param>
+        public void PushUndoStack(ICommand command)
+        {
+        }
+
+        /// <summary>
         /// Init the 2D cell elements and configure the CellPropertyChange event for each cell in array.
         /// </summary>
         /// <param name="row"> row number. </param>
@@ -105,7 +123,8 @@ namespace SpreadsheetEngine
             if (e.PropertyName.Equals("Text"))
             {
                 this.SetCellValue(sender as TheCell);
-            }else if (e.PropertyName.Equals("BGColor"))
+            }
+            else if (e.PropertyName.Equals("BGColor"))
             {
                 this.CellPropertyChanged(sender as TheCell, new PropertyChangedEventArgs("BGColor"));
             }

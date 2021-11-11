@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -179,10 +180,15 @@ namespace Spreadsheet_Boxiang_Lin
             if (myDialog.ShowDialog() == DialogResult.OK)
             {
                 uint newColor = (uint)myDialog.Color.ToArgb();
+                List<TheCell> selectedCells = new List<TheCell>();
                 foreach (DataGridViewCell formCell in this.dataGridView1.SelectedCells)
                 {
-                    this.spreadsheet.Cells[formCell.RowIndex, formCell.ColumnIndex].BGColor = newColor;
+                    TheCell curCell = this.spreadsheet.GetCell(formCell.RowIndex, formCell.ColumnIndex);
+                    selectedCells.Add(curCell);
                 }
+
+                ColorCommand colorCommand = new ColorCommand(selectedCells, newColor);
+                colorCommand.Execute();
             }
         }
     }
