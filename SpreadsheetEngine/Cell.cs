@@ -47,6 +47,8 @@ namespace CptS321
         /// <param name="columnIndex"> columnIndex. </param>
         public Cell(int rowIndex, char columnIndex)
         {
+            this.text = string.Empty;
+            this.value = string.Empty;
             this.rowIndex = rowIndex;
             this.columnIndex = columnIndex;
             this.bgColor = 0xFFFFFFFF;

@@ -15,7 +15,6 @@ namespace SpreadsheetEngine
     /// </summary>
     public class TextCommand : ICommand
     {
-
         /// <summary>
         /// Cell for the text change.
         /// </summary>
@@ -32,11 +31,23 @@ namespace SpreadsheetEngine
         private string prevValue;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="TextCommand"/> class.
+        /// </summary>
+        /// <param name="cell"> selected cell. </param>
+        /// <param name="newValue"> new value. </param>
+        public TextCommand(TheCell cell, string newValue)
+        {
+            this.cell = cell;
+            this.newValue = newValue;
+            this.SetPrevValue();
+        }
+
+        /// <summary>
         /// Execute the text change.
         /// </summary>
         public void Execute()
         {
-            throw new NotImplementedException();
+            this.cell.Text = this.newValue;
         }
 
         /// <summary>
@@ -44,7 +55,24 @@ namespace SpreadsheetEngine
         /// </summary>
         public void Unexecute()
         {
-            throw new NotImplementedException();
+            this.cell.Text = this.prevValue;
+        }
+
+        /// <summary>
+        /// Diplay the description of the command.
+        /// </summary>
+        /// <returns> string description. </returns>
+        public override string ToString()
+        {
+            return "The Text Change Command";
+        }
+
+        /// <summary>
+        /// Set the prev value with cells text.
+        /// </summary>
+        private void SetPrevValue()
+        {
+            this.prevValue = this.cell.Text;
         }
     }
 }

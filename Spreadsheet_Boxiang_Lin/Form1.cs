@@ -25,10 +25,6 @@ namespace Spreadsheet_Boxiang_Lin
         public Form1()
         {
             this.InitializeComponent();
-            this.spreadsheet = new Spreadsheet(50, 26);
-            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
-            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
-            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
         }
 
         /// <summary>
@@ -41,6 +37,10 @@ namespace Spreadsheet_Boxiang_Lin
             this.ResetDataGridView();
             this.InitColumns('A', 'Z');
             this.InitRows(1, 50);
+            this.spreadsheet = new Spreadsheet(50, 26);
+            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
+            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
+            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
             this.SetUndoRedoMeanuVisibilityAndInfo();
         }
 
@@ -80,7 +80,7 @@ namespace Spreadsheet_Boxiang_Lin
             // Get the selected cell.
             DataGridViewCell dataCell = this.dataGridView1.Rows[row].Cells[col];
 
-            // value match to cell text property.
+            // default cell.text is string.empty and let the dataCell to be string.empty as well.
             dataCell.Value = cell.Text;
         }
 
@@ -94,15 +94,17 @@ namespace Spreadsheet_Boxiang_Lin
             int row = e.RowIndex;
             int col = e.ColumnIndex;
             TheCell cell = this.spreadsheet.GetCell(row, col);
-
             DataGridViewCell dataCell = this.dataGridView1.Rows[row].Cells[col];
-            if (dataCell.Value != null)
-            {
-                string update = dataCell.Value.ToString();
-                cell.Text = update;
-            }
 
-            dataCell.Value = cell.Value;
+            // If new value we type into dataCell different than existing cell text, we want to make update our local cell.
+            if (cell.Text != dataCell.Value.ToString())
+            {
+                string newValue = dataCell.Value.ToString();
+                TextCommand command = new TextCommand(cell, newValue);
+                this.spreadsheet.NewCommandAdd(command);
+                this.SetUndoRedoMeanuVisibilityAndInfo();
+                dataCell.Value = cell.Value;
+            }
         }
 
         /// <summary>
@@ -185,12 +187,22 @@ namespace Spreadsheet_Boxiang_Lin
                 foreach (DataGridViewCell formCell in this.dataGridView1.SelectedCells)
                 {
                     TheCell curCell = this.spreadsheet.GetCell(formCell.RowIndex, formCell.ColumnIndex);
-                    selectedCells.Add(curCell);
+
+                    // only that local cell color different than new color should get color updated.
+                    if (curCell.BGColor != newColor)
+                    {
+                        selectedCells.Add(curCell);
+                    }
                 }
 
-                ColorCommand colorCommand = new ColorCommand(selectedCells, newColor);
-                this.spreadsheet.NewCommandAdd(colorCommand);
-                this.SetUndoRedoMeanuVisibilityAndInfo();
+                // if numbers of cell selected greater than 0, means some cell we have to color update.
+                // then, create command and push it to undo stack.
+                if (selectedCells.Count > 0)
+                {
+                    ColorCommand colorCommand = new ColorCommand(selectedCells, newColor);
+                    this.spreadsheet.NewCommandAdd(colorCommand);
+                    this.SetUndoRedoMeanuVisibilityAndInfo();
+                }
             }
         }
 

@@ -162,7 +162,6 @@ namespace SpreadsheetEngine
             return this.redos.Count <= 0;
         }
 
-
         /// <summary>
         /// Init the 2D cell elements and configure the CellPropertyChange event for each cell in array.
         /// </summary>
@@ -238,7 +237,7 @@ namespace SpreadsheetEngine
             }
 
             cell.SetValue(newValue);
-            this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
+            this.CellPropertyChanged(cell, new PropertyChangedEventArgs("Value"));
         }
 
         /// <summary>
