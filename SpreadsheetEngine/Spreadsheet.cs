@@ -127,6 +127,43 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// Returning the info fo the command in string for UI to display.
+        /// </summary>
+        /// <returns> string description of the type. </returns>
+        public string GetRedoCommandInfo()
+        {
+            return this.redos.Peek().ToString();
+        }
+
+        /// <summary>
+        /// Returning the info fo the command in string for UI to display.
+        /// </summary>
+        /// <returns> string description of the command. </returns>
+        public string GetUndoCommandInfo()
+        {
+            return this.undos.Peek().ToString();
+        }
+
+        /// <summary>
+        /// Return bool empty if true otherwise false for use of UI determination.
+        /// </summary>
+        /// <returns> bool. </returns>
+        public bool IsEmptyUndoStack()
+        {
+            return this.undos.Count <= 0;
+        }
+
+        /// <summary>
+        /// Return bool empty if true otherwise false for use of UI determination.
+        /// </summary>
+        /// <returns> bool. </returns>
+        public bool IsEmptyRedoStack()
+        {
+            return this.redos.Count <= 0;
+        }
+
+
+        /// <summary>
         /// Init the 2D cell elements and configure the CellPropertyChange event for each cell in array.
         /// </summary>
         /// <param name="row"> row number. </param>

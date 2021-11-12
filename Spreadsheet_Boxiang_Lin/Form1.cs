@@ -41,6 +41,7 @@ namespace Spreadsheet_Boxiang_Lin
             this.ResetDataGridView();
             this.InitColumns('A', 'Z');
             this.InitRows(1, 50);
+            this.SetUndoRedoMeanuVisibilityAndInfo();
         }
 
         /// <summary>
@@ -189,6 +190,7 @@ namespace Spreadsheet_Boxiang_Lin
 
                 ColorCommand colorCommand = new ColorCommand(selectedCells, newColor);
                 this.spreadsheet.NewCommandAdd(colorCommand);
+                this.SetUndoRedoMeanuVisibilityAndInfo();
             }
         }
 
@@ -200,6 +202,7 @@ namespace Spreadsheet_Boxiang_Lin
         private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.spreadsheet.RunUndoCommand();
+            this.SetUndoRedoMeanuVisibilityAndInfo();
         }
 
         /// <summary>
@@ -210,6 +213,34 @@ namespace Spreadsheet_Boxiang_Lin
         private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.spreadsheet.RunRedoCommand();
+            this.SetUndoRedoMeanuVisibilityAndInfo();
+        }
+
+        /// <summary>
+        /// Set the enable or disable for redo and undo menu depending on size of stacks.
+        /// Change to correct menu text when Redo and Undo are functional.
+        /// </summary>
+        private void SetUndoRedoMeanuVisibilityAndInfo()
+        {
+            if (this.spreadsheet.IsEmptyRedoStack())
+            {
+                this.redoToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                this.redoToolStripMenuItem.Enabled = true;
+                this.redoToolStripMenuItem.Text = "Redo " + this.spreadsheet.GetRedoCommandInfo();
+            }
+
+            if (this.spreadsheet.IsEmptyUndoStack())
+            {
+                this.undoToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                this.undoToolStripMenuItem.Enabled = true;
+                this.undoToolStripMenuItem.Text = "Undo " + this.spreadsheet.GetUndoCommandInfo();
+            }
         }
     }
 }

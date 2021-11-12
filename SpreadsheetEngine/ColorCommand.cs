@@ -65,6 +65,15 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// Diplay the description of the command.
+        /// </summary>
+        /// <returns> string description. </returns>
+        public override string ToString()
+        {
+            return "The Background Color Change Command";
+        }
+
+        /// <summary>
         /// Update the prevColor dictionary.
         /// </summary>
         private void SetPrevColors()
