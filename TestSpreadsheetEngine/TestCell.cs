@@ -18,7 +18,7 @@ namespace CptS321.Tests
     public class TestCell
     {
         private TheCell cell = new TheCell(3, 'A');
-        
+
         /// <summary>
         /// Test the cell's private member variables that gets set by the constructor.
         /// </summary>

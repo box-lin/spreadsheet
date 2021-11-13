@@ -97,7 +97,7 @@ namespace Spreadsheet_Boxiang_Lin
             DataGridViewCell dataCell = this.dataGridView1.Rows[row].Cells[col];
 
             // If new value we type into dataCell different than existing cell text, we want to make update our local cell.
-            if (cell.Text != dataCell.Value.ToString())
+            if ((dataCell.Value != null && cell.Text != dataCell.Value.ToString()) || dataCell.Value.ToString().StartsWith("="))
             {
                 string newValue = dataCell.Value.ToString();
                 TextCommand command = new TextCommand(cell, newValue);

@@ -1,7 +1,8 @@
-﻿// <copyright file="TestTextCommand.cs" company="Boxiang Lin - WSU 011601661">
+﻿// <copyright file="TestColorCommand.cs" company="Boxiang Lin - WSU 011601661">
 // Copyright (c) Boxiang Lin - WSU 011601661. All rights reserved.
 // </copyright>
 
+using System.Collections.Generic;
 using NUnit.Framework;
 using SpreadsheetEngine;
 
@@ -11,7 +12,7 @@ namespace CptS321.Tests
     /// Test Text Command Class.
     /// </summary>
     [TestFixture]
-    public class TestTextCommand
+    public class TestColorCommand
     {
         private Spreadsheet ss = new Spreadsheet(50, 26);
 
@@ -21,10 +22,10 @@ namespace CptS321.Tests
         [Test]
         public void TestExecute()
         {
-            TheCell cell = this.ss.GetCell(1, 1);
-            TextCommand command = new TextCommand(cell, "newText");
+            List<TheCell> cells = new List<TheCell> { this.ss.GetCell(1, 1) };
+            ColorCommand command = new ColorCommand(cells, 0xAAAAAAAA);
             command.Execute();
-            Assert.AreEqual("newText", cell.Text);
+            Assert.AreEqual(0xAAAAAAAA, cells[0].BGColor);
         }
 
         /// <summary>
@@ -33,11 +34,11 @@ namespace CptS321.Tests
         [Test]
         public void TestUnexecute()
         {
-            TheCell cell = this.ss.GetCell(3, 3);
-            TextCommand command = new TextCommand(cell, "newText");
+            List<TheCell> cells = new List<TheCell> { this.ss.GetCell(2, 2) };
+            ColorCommand command = new ColorCommand(cells, 0xAAAAAAAA);
             command.Execute();
             command.Unexecute();
-            Assert.AreEqual(string.Empty, cell.Text);
+            Assert.AreEqual(0xFFFFFFFF, cells[0].BGColor);
         }
 
         /// <summary>
@@ -46,9 +47,9 @@ namespace CptS321.Tests
         [Test]
         public void TestToString()
         {
-            TheCell cell = this.ss.GetCell(2, 2);
-            TextCommand command = new TextCommand(cell, "newText");
-            Assert.AreEqual("The Text Change Command", command.ToString());
+            List<TheCell> cells = new List<TheCell> { this.ss.GetCell(6, 6) };
+            ColorCommand command = new ColorCommand(cells, 0xAAAAAAAA);
+            Assert.AreEqual("The Background Color Change Command", command.ToString());
         }
     }
 }

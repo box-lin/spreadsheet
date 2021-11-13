@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestCell.cs" />
+    <Compile Include="TestColorCommand.cs" />
     <Compile Include="TestExpressionTree.cs" />
     <Compile Include="TestOpNodeFactory.cs" />
     <Compile Include="TestSpreadsheet.cs" />
