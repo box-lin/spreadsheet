@@ -97,7 +97,7 @@ namespace CptS321
                 }
 
                 this.text = value;
-                this.PropertyChanged(this, new PropertyChangedEventArgs("Text"));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Text"));
             }
         }
 
@@ -119,7 +119,7 @@ namespace CptS321
                 }
 
                 this.bgColor = value;
-                this.PropertyChanged(this, new PropertyChangedEventArgs("BGColor"));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("BGColor"));
             }
         }
 

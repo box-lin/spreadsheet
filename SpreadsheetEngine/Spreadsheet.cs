@@ -196,7 +196,7 @@ namespace SpreadsheetEngine
             }
             else if (e.PropertyName.Equals("BGColor"))
             {
-                this.CellPropertyChanged(sender as TheCell, new PropertyChangedEventArgs("BGColor"));
+                this.CellPropertyChanged?.Invoke(sender as TheCell, new PropertyChangedEventArgs("BGColor"));
             }
         }
 
@@ -237,7 +237,7 @@ namespace SpreadsheetEngine
             }
 
             cell.SetValue(newValue);
-            this.CellPropertyChanged(cell, new PropertyChangedEventArgs("Value"));
+            this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
         }
 
         /// <summary>
