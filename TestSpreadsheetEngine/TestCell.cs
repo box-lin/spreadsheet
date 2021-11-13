@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using CptS321;
 using NUnit.Framework;
+using SpreadsheetEngine;
 
 namespace CptS321.Tests
 {
@@ -16,17 +17,7 @@ namespace CptS321.Tests
     [TestFixture]
     public class TestCell
     {
-        private TheCell cell;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TestCell"/> class.
-        /// Set up the cell.
-        /// </summary>
-        public TestCell()
-        {
-            this.cell = new TheCell(3, 'A');
-            this.cell.Text = "Hello";
-        }
+        private TheCell cell = new TheCell(3, 'A');
 
         /// <summary>
         /// Test the cell's private member variables that gets set by the constructor.
@@ -46,25 +37,8 @@ namespace CptS321.Tests
         [Test]
         public void TestCellProtectedMemberVariablesAndPropertyField()
         {
-            Assert.AreEqual("Hello", this.cell.Text);
-            Assert.AreEqual('A', this.cell.ColumnIndex);
-            Assert.AreEqual(3, this.cell.RowIndex);
-        }
-
-        /// <summary>
-        /// TheCell class that extend to abstract class Cell.
-        /// </summary>
-        internal class TheCell : Cell
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="TheCell"/> class.
-            /// </summary>
-            /// <param name="row"> rowIndex. </param>
-            /// <param name="col"> colIndex. </param>
-            public TheCell(int row, char col)
-                : base(row, col)
-            {
-            }
+            this.cell.Text = "hello";
+            Assert.AreEqual("hello", this.cell.Text);
         }
     }
 }

@@ -76,5 +76,93 @@ namespace CptS321.Tests
             Assert.AreEqual(49, this.ss.RowCount);
             Assert.AreEqual(26, this.ss.ColumnCount);
         }
+
+        /// <summary>
+        /// Test the NewCommandAdd method.
+        /// </summary>
+        [Test]
+        public void TestNewCommandAdd()
+        {
+            Spreadsheet ss = new Spreadsheet(50, 26);
+            Assert.AreEqual(true, ss.IsEmptyUndoStack());
+            CommandItem command = new CommandItem();
+            ss.NewCommandAdd(command);
+            Assert.AreEqual(false, ss.IsEmptyUndoStack());
+        }
+
+        /// <summary>
+        /// Test the RunUndoCommand.
+        /// </summary>
+        [Test]
+        public void TestRunUndoCommand()
+        {
+            Spreadsheet ss = new Spreadsheet(50, 26);
+            CommandItem command = new CommandItem();
+            ss.NewCommandAdd(command);
+            ss.RunUndoCommand();
+            Assert.AreEqual(true, ss.IsEmptyUndoStack());
+        }
+
+        /// <summary>
+        /// Test the RunRedoCommand.
+        /// </summary>
+        [Test]
+        public void TestRunRedoCommand()
+        {
+            Spreadsheet ss = new Spreadsheet(50, 26);
+            CommandItem command = new CommandItem();
+            ss.NewCommandAdd(command);
+            ss.RunUndoCommand();
+
+            // undo run, redo available.
+            Assert.AreEqual(false, ss.IsEmptyRedoStack());
+
+            // redo, then undo can be available again
+            ss.RunRedoCommand();
+            Assert.AreEqual(false, ss.IsEmptyUndoStack());
+        }
+
+        /// <summary>
+        /// Test the functionalities of GetCommandInfo.
+        /// </summary>
+        public void TestCommandInfo()
+        {
+            Spreadsheet ss = new Spreadsheet(50, 26);
+            CommandItem command = new CommandItem();
+            ss.NewCommandAdd(command);
+            Assert.AreEqual("default command", ss.GetUndoCommandInfo());
+
+            this.ss.RunUndoCommand();
+            Assert.AreEqual("default command", ss.GetRedoCommandInfo());
+        }
+
+        /// <summary>
+        /// This is just command item use to test the redo and undo stack.
+        /// </summary>
+        private class CommandItem : ICommand
+        {
+            /// <summary>
+            /// default non implementation.
+            /// </summary>
+            public void Execute()
+            {
+            }
+
+            /// <summary>
+            /// default non implementation.
+            /// </summary>
+            public void Unexecute()
+            {
+            }
+
+            /// <summary>
+            /// tostring method.
+            /// </summary>
+            /// <returns> default message. </returns>
+            public override string ToString()
+            {
+                return "default command";
+            }
+        }
     }
 }

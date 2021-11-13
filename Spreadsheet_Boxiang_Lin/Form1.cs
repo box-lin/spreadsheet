@@ -3,7 +3,9 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using CptS321;
 using SpreadsheetEngine;
@@ -23,7 +25,6 @@ namespace Spreadsheet_Boxiang_Lin
         public Form1()
         {
             this.InitializeComponent();
-            this.spreadsheet = new Spreadsheet(50, 26);
         }
 
         /// <summary>
@@ -36,9 +37,11 @@ namespace Spreadsheet_Boxiang_Lin
             this.ResetDataGridView();
             this.InitColumns('A', 'Z');
             this.InitRows(1, 50);
+            this.spreadsheet = new Spreadsheet(50, 26);
             this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
             this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
             this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
+            this.SetUndoRedoMeanuVisibilityAndInfo();
         }
 
         /// <summary>
@@ -48,13 +51,17 @@ namespace Spreadsheet_Boxiang_Lin
         /// <param name="e"> Event. </param>
         private void OnCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            TheCell curCell = sender as TheCell;
+            int col = (int)curCell.ColumnIndex - 'A';
+            DataGridViewCell formCell = this.dataGridView1.Rows[curCell.RowIndex].Cells[col];
             if (e.PropertyName == "Value")
             {
-                Cell curCell = (Cell)sender;
-                int col = (int)curCell.ColumnIndex - 'A';
-
-                // curCell val get set in Spreadsheet.
-                this.dataGridView1.Rows[curCell.RowIndex].Cells[col].Value = curCell.Value;
+                formCell.Value = curCell.Value;
+            }
+            else if (e.PropertyName == "BGColor")
+            {
+                Color newColor = Color.FromArgb((int)curCell.BGColor);
+                formCell.Style.BackColor = newColor;
             }
         }
 
@@ -68,12 +75,12 @@ namespace Spreadsheet_Boxiang_Lin
             int row = e.RowIndex;
             int col = e.ColumnIndex;
 
-            Cell cell = this.spreadsheet.GetCell(row, col);
+            TheCell cell = this.spreadsheet.GetCell(row, col);
 
             // Get the selected cell.
             DataGridViewCell dataCell = this.dataGridView1.Rows[row].Cells[col];
 
-            // value match to cell text property.
+            // default cell.text is string.empty and let the dataCell to be string.empty as well.
             dataCell.Value = cell.Text;
         }
 
@@ -86,16 +93,18 @@ namespace Spreadsheet_Boxiang_Lin
         {
             int row = e.RowIndex;
             int col = e.ColumnIndex;
-            Cell cell = this.spreadsheet.GetCell(row, col);
-
+            TheCell cell = this.spreadsheet.GetCell(row, col);
             DataGridViewCell dataCell = this.dataGridView1.Rows[row].Cells[col];
-            if (dataCell.Value != null)
-            {
-                string update = dataCell.Value.ToString();
-                cell.Text = update;
-            }
 
-            dataCell.Value = cell.Value;
+            // If new value we type into dataCell different than existing cell text, we want to make update our local cell.
+            if ((dataCell.Value != null && cell.Text != dataCell.Value.ToString()) || dataCell.Value.ToString().StartsWith("="))
+            {
+                string newValue = dataCell.Value.ToString();
+                TextCommand command = new TextCommand(cell, newValue);
+                this.spreadsheet.NewCommandAdd(command);
+                this.SetUndoRedoMeanuVisibilityAndInfo();
+                dataCell.Value = cell.Value;
+            }
         }
 
         /// <summary>
@@ -160,6 +169,90 @@ namespace Spreadsheet_Boxiang_Lin
         {
             this.dataGridView1.CancelEdit();
             this.dataGridView1.Columns.Clear();
+        }
+
+        /// <summary>
+        /// Event handler for click the Change Background Color.
+        /// Select the background color from dialog window.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void ChangeTheColorForAllSelectedCellsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog myDialog = new ColorDialog();
+            if (myDialog.ShowDialog() == DialogResult.OK)
+            {
+                uint newColor = (uint)myDialog.Color.ToArgb();
+                List<TheCell> selectedCells = new List<TheCell>();
+                foreach (DataGridViewCell formCell in this.dataGridView1.SelectedCells)
+                {
+                    TheCell curCell = this.spreadsheet.GetCell(formCell.RowIndex, formCell.ColumnIndex);
+
+                    // only that local cell color different than new color should get color updated.
+                    if (curCell.BGColor != newColor)
+                    {
+                        selectedCells.Add(curCell);
+                    }
+                }
+
+                // if numbers of cell selected greater than 0, means some cell we have to color update.
+                // then, create command and push it to undo stack.
+                if (selectedCells.Count > 0)
+                {
+                    ColorCommand colorCommand = new ColorCommand(selectedCells, newColor);
+                    this.spreadsheet.NewCommandAdd(colorCommand);
+                    this.SetUndoRedoMeanuVisibilityAndInfo();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Undo event handler.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.spreadsheet.RunUndoCommand();
+            this.SetUndoRedoMeanuVisibilityAndInfo();
+        }
+
+        /// <summary>
+        /// Redo event handler.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void RedoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.spreadsheet.RunRedoCommand();
+            this.SetUndoRedoMeanuVisibilityAndInfo();
+        }
+
+        /// <summary>
+        /// Set the enable or disable for redo and undo menu depending on size of stacks.
+        /// Change to correct menu text when Redo and Undo are functional.
+        /// </summary>
+        private void SetUndoRedoMeanuVisibilityAndInfo()
+        {
+            if (this.spreadsheet.IsEmptyRedoStack())
+            {
+                this.redoToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                this.redoToolStripMenuItem.Enabled = true;
+                this.redoToolStripMenuItem.Text = "Redo " + this.spreadsheet.GetRedoCommandInfo();
+            }
+
+            if (this.spreadsheet.IsEmptyUndoStack())
+            {
+                this.undoToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                this.undoToolStripMenuItem.Enabled = true;
+                this.undoToolStripMenuItem.Text = "Undo " + this.spreadsheet.GetUndoCommandInfo();
+            }
         }
     }
 }

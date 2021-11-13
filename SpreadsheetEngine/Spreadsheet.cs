@@ -25,6 +25,16 @@ namespace SpreadsheetEngine
         private int rowCount;
 
         /// <summary>
+        /// Undo stack to store specic command that implements the ICommand Interface.
+        /// </summary>
+        private Stack<ICommand> undos;
+
+        /// <summary>
+        /// Redo stack to store specifc command that implements the Icoomand Interface.
+        /// </summary>
+        private Stack<ICommand> redos;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Spreadsheet"/> class.
         /// </summary>
         /// <param name="row"> row number. </param>
@@ -34,6 +44,8 @@ namespace SpreadsheetEngine
             this.CellsInit(row, col);
             this.columnCount = col;
             this.rowCount = row;
+            this.undos = new Stack<ICommand>();
+            this.redos = new Stack<ICommand>();
         }
 
         /// <summary>
@@ -75,6 +87,82 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// When brand new command add, redo should be disable.
+        /// By instruction, disable is to make the redo stack empty.
+        /// </summary>
+        /// <param name="command"> incoming command. </param>
+        public void NewCommandAdd(ICommand command)
+        {
+            this.redos.Clear();
+            command.Execute();
+            this.undos.Push(command);
+        }
+
+        /// <summary>
+        /// Undo Command execution.
+        /// pop the undo stack, unexecute, and push it to redo stack.
+        /// </summary>
+        public void RunUndoCommand()
+        {
+            if (this.undos.Count > 0)
+            {
+                ICommand undoCommand = this.undos.Pop();
+                undoCommand.Unexecute();
+                this.redos.Push(undoCommand);
+            }
+        }
+
+        /// <summary>
+        /// Redo command execution.
+        /// pop the redo stack, execute, and push it to undo stack.
+        /// </summary>
+        public void RunRedoCommand()
+        {
+            if (this.redos.Count > 0)
+            {
+                ICommand redoCommand = this.redos.Pop();
+                redoCommand.Execute();
+                this.undos.Push(redoCommand);
+            }
+        }
+
+        /// <summary>
+        /// Returning the info fo the command in string for UI to display.
+        /// </summary>
+        /// <returns> string description of the type. </returns>
+        public string GetRedoCommandInfo()
+        {
+            return this.redos.Peek().ToString();
+        }
+
+        /// <summary>
+        /// Returning the info fo the command in string for UI to display.
+        /// </summary>
+        /// <returns> string description of the command. </returns>
+        public string GetUndoCommandInfo()
+        {
+            return this.undos.Peek().ToString();
+        }
+
+        /// <summary>
+        /// Return bool empty if true otherwise false for use of UI determination.
+        /// </summary>
+        /// <returns> bool. </returns>
+        public bool IsEmptyUndoStack()
+        {
+            return this.undos.Count <= 0;
+        }
+
+        /// <summary>
+        /// Return bool empty if true otherwise false for use of UI determination.
+        /// </summary>
+        /// <returns> bool. </returns>
+        public bool IsEmptyRedoStack()
+        {
+            return this.redos.Count <= 0;
+        }
+
+        /// <summary>
         /// Init the 2D cell elements and configure the CellPropertyChange event for each cell in array.
         /// </summary>
         /// <param name="row"> row number. </param>
@@ -105,6 +193,10 @@ namespace SpreadsheetEngine
             if (e.PropertyName.Equals("Text"))
             {
                 this.SetCellValue(sender as TheCell);
+            }
+            else if (e.PropertyName.Equals("BGColor"))
+            {
+                this.CellPropertyChanged?.Invoke(sender as TheCell, new PropertyChangedEventArgs("BGColor"));
             }
         }
 

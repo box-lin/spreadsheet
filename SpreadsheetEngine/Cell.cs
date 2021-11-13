@@ -19,15 +19,22 @@ namespace CptS321
         /// <summary>
         /// Text inside a cell.
         /// </summary>
-        #pragma warning disable SA1401 // Fields should be protected so can be use in spreadsheet
+        #pragma warning disable SA1401 // Fields should be protected so can be use in spreadsheet from derived class.
         protected string text;
         #pragma warning restore SA1401
 
         /// <summary>
         /// Value of a cell.
         /// </summary>
-        #pragma warning disable SA1401 // Fields should be protected so can be use in spreadsheet
+        #pragma warning disable SA1401 // Fields should be protected so can be use in spreadsheet from derived class.
         protected string value;
+        #pragma warning restore SA1401
+
+        /// <summary>
+        /// value for the background color.
+        /// </summary>
+        #pragma warning disable SA1401 // Fields should be protected so can be use in spreadsheet from derived class.
+        protected uint bgColor;
         #pragma warning restore SA1401
 
         private readonly int rowIndex;
@@ -40,12 +47,15 @@ namespace CptS321
         /// <param name="columnIndex"> columnIndex. </param>
         public Cell(int rowIndex, char columnIndex)
         {
+            this.text = string.Empty;
+            this.value = string.Empty;
             this.rowIndex = rowIndex;
             this.columnIndex = columnIndex;
+            this.bgColor = 0xFFFFFFFF;
         }
 
         /// <inheritdoc/>
-        public event PropertyChangedEventHandler PropertyChanged = (sender, e) => { };
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets the rowIndex.
@@ -87,7 +97,29 @@ namespace CptS321
                 }
 
                 this.text = value;
-                this.PropertyChanged(this, new PropertyChangedEventArgs("Text"));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Text"));
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the bgColor.
+        /// </summary>
+        public uint BGColor
+        {
+            get
+            {
+                return this.bgColor;
+            }
+
+            set
+            {
+                if (this.bgColor == value)
+                {
+                    return;
+                }
+
+                this.bgColor = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("BGColor"));
             }
         }
 
