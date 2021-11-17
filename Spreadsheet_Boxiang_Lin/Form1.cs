@@ -263,7 +263,13 @@ namespace Spreadsheet_Boxiang_Lin
         /// <param name="e"> event. </param>
         private void LoadToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-
+            OpenFileDialog openDialog = new OpenFileDialog();
+            openDialog.Filter = "XML files | *.xml";
+            if (openDialog.ShowDialog() == DialogResult.OK)
+            {
+                Stream s = openDialog.OpenFile();
+                s.Close();
+            }
         }
 
         /// <summary>
@@ -279,6 +285,7 @@ namespace Spreadsheet_Boxiang_Lin
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
                 Stream s = saveDialog.OpenFile();
+                this.spreadsheet.SaveToXML(s);
                 s.Close();
             }
         }

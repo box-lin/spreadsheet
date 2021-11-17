@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Xml;
 using CptS321;
 
 namespace SpreadsheetEngine
@@ -160,6 +162,58 @@ namespace SpreadsheetEngine
         public bool IsEmptyRedoStack()
         {
             return this.redos.Count <= 0;
+        }
+
+        /// <summary>
+        /// Save to XML from Stream.
+        /// </summary>
+        /// <param name="s"> stream. </param>
+        public void SaveToXML(Stream s)
+        {
+            XmlWriter wr = XmlWriter.Create(s);
+
+            // root
+            wr.WriteStartElement("spreadsheet");
+
+            // refer to our local cell data.
+            foreach (TheCell cell in this.Cells)
+            {
+                // if not default value we need to save info to the XML
+                if (cell.Text != string.Empty || cell.BGColor != 0xFFFFFFFF)
+                {
+                    string cellname = cell.ColumnIndex + (cell.RowIndex + 1).ToString();
+
+                    // second layer by cell.
+                    wr.WriteStartElement("cell");
+                    wr.WriteAttributeString("name", cellname);
+
+                    // write the color first if not default.
+                    if (cell.BGColor != 0xFFFFFFFF)
+                    {
+                        // third layer.
+                        wr.WriteStartElement("bgcolor");
+
+                        // for 16 bits string representation.
+                        wr.WriteString(cell.BGColor.ToString("X"));
+                        wr.WriteEndElement();
+                    }
+
+                    if (cell.Text != string.Empty)
+                    {
+                        // third layer.
+                        wr.WriteStartElement("text");
+                        wr.WriteString(cell.Text);
+                        wr.WriteEndElement();
+                    }
+
+                    // end second layer.
+                    wr.WriteEndElement();
+                }
+            }
+
+            // close first layer.
+            wr.WriteEndElement();
+            wr.Close();
         }
 
         /// <summary>
