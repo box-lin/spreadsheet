@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using CptS321;
 using SpreadsheetEngine;
@@ -252,6 +253,33 @@ namespace Spreadsheet_Boxiang_Lin
             {
                 this.undoToolStripMenuItem.Enabled = true;
                 this.undoToolStripMenuItem.Text = "Undo " + this.spreadsheet.GetUndoCommandInfo();
+            }
+        }
+
+        /// <summary>
+        /// Load XML event.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void LoadToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Save to XML event.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.Filter = "XML files | *.xml";
+
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                Stream s = saveDialog.OpenFile();
+                s.Close();
             }
         }
     }
