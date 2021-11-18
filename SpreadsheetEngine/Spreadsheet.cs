@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Xml;
+using System.Xml.Linq;
 using CptS321;
 
 namespace SpreadsheetEngine
@@ -165,7 +166,58 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
-        /// Save to XML from Stream.
+        /// Load the xml to spreadsheet from stream.
+        /// </summary>
+        /// <param name="s"> stream. </param>
+        public void LoadFromXml(Stream s)
+        {
+            XmlDocument xDoc = new XmlDocument();
+            xDoc.Load(s);
+
+            // root pick
+            XmlNode root = xDoc.SelectSingleNode("spreadsheet");
+
+            if (root == null)
+            {
+                return;
+            }
+
+            this.undos.Clear();
+            this.redos.Clear();
+            XmlNodeList childList = root.ChildNodes;
+
+            // traverse through cells in spreadsheet.
+            foreach (XmlNode child in childList)
+            {
+                XmlElement element = (XmlElement)child;
+
+                // encounter a cell.
+                if (element.Name == "cell")
+                {
+                    // retrieve the spreadsheet cell.
+                    string cellname = element.GetAttribute("name");
+                    TheCell cell = this.GetCellByName(cellname);
+
+                    // traverse the attributes of a cell --> for cell's text and bgcolors.
+                    foreach (XmlNode cchild in child.ChildNodes)
+                    {
+                        XmlElement childElement = (XmlElement)cchild;
+                        if (childElement.Name == "bgcolor")
+                        {
+                            uint color = Convert.ToUInt32(childElement.InnerText, 16);
+                            cell.BGColor = color;
+                        }
+                        else if (childElement.Name == "text")
+                        {
+                            cell.Text = childElement.InnerText;
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Spreadsheet save to XML from stream.
         /// </summary>
         /// <param name="s"> stream. </param>
         public void SaveToXML(Stream s)
@@ -193,7 +245,7 @@ namespace SpreadsheetEngine
                         // third layer.
                         wr.WriteStartElement("bgcolor");
 
-                        // for 16 bits string representation.
+                        // for 16 bits int in string representation.
                         wr.WriteString(cell.BGColor.ToString("X"));
                         wr.WriteEndElement();
                     }

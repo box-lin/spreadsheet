@@ -36,13 +36,6 @@ namespace Spreadsheet_Boxiang_Lin
         private void Form1_Load(object sender, EventArgs e)
         {
             this.ResetDataGridView();
-            this.InitColumns('A', 'Z');
-            this.InitRows(1, 50);
-            this.spreadsheet = new Spreadsheet(50, 26);
-            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
-            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
-            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
-            this.SetUndoRedoMeanuVisibilityAndInfo();
         }
 
         /// <summary>
@@ -168,8 +161,15 @@ namespace Spreadsheet_Boxiang_Lin
         /// </summary>
         private void ResetDataGridView()
         {
-            this.dataGridView1.CancelEdit();
             this.dataGridView1.Columns.Clear();
+            this.InitColumns('A', 'Z');
+            this.dataGridView1.Rows.Clear();
+            this.InitRows(1, 50);
+            this.spreadsheet = new Spreadsheet(50, 26);
+            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
+            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
+            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
+            this.SetUndoRedoMeanuVisibilityAndInfo();
         }
 
         /// <summary>
@@ -267,7 +267,10 @@ namespace Spreadsheet_Boxiang_Lin
             openDialog.Filter = "XML files | *.xml";
             if (openDialog.ShowDialog() == DialogResult.OK)
             {
+                this.ResetDataGridView();
                 Stream s = openDialog.OpenFile();
+                this.spreadsheet.LoadFromXml(s);
+                this.SetUndoRedoMeanuVisibilityAndInfo();
                 s.Close();
             }
         }
