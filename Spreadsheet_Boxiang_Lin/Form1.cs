@@ -52,7 +52,8 @@ namespace Spreadsheet_Boxiang_Lin
             {
                 formCell.Value = curCell.Value;
             }
-            else if (e.PropertyName == "BGColor")
+
+            if (e.PropertyName == "BGColor")
             {
                 Color newColor = Color.FromArgb((int)curCell.BGColor);
                 formCell.Style.BackColor = newColor;
@@ -91,7 +92,7 @@ namespace Spreadsheet_Boxiang_Lin
             DataGridViewCell dataCell = this.dataGridView1.Rows[row].Cells[col];
 
             // If new value we type into dataCell different than existing cell text, we want to make update our local cell.
-            if ((dataCell.Value != null && cell.Text != dataCell.Value.ToString()) || dataCell.Value.ToString().StartsWith("="))
+            if ((dataCell.Value != null && cell.Text != dataCell.Value.ToString()) || (dataCell.Value != null && dataCell.Value.ToString().StartsWith("=")))
             {
                 string newValue = dataCell.Value.ToString();
                 TextCommand command = new TextCommand(cell, newValue);
@@ -267,8 +268,8 @@ namespace Spreadsheet_Boxiang_Lin
             openDialog.Filter = "XML files | *.xml";
             if (openDialog.ShowDialog() == DialogResult.OK)
             {
-                this.ResetDataGridView();
                 Stream s = openDialog.OpenFile();
+                this.ResetDataGridView();
                 this.spreadsheet.LoadFromXml(s);
                 this.SetUndoRedoMeanuVisibilityAndInfo();
                 s.Close();

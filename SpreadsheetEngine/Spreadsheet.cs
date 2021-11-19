@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using CptS321;
@@ -204,10 +206,19 @@ namespace SpreadsheetEngine
                         XmlElement childElement = (XmlElement)cchild;
                         if (childElement.Name == "bgcolor")
                         {
-                            uint color = Convert.ToUInt32(childElement.InnerText, 16);
-                            cell.BGColor = color;
+                            string color = childElement.InnerText;
+                            while (color.Length < 8)
+                            {
+                                color = "F" + color;
+                            }
+
+                            uint newColor = Convert.ToUInt32(color, 16);
+                            // uint newColor = Convert.ToUInt32(childElement.InnerText, 16);
+                            cell.BGColor = newColor;
+                            // cell.Text = color;
                         }
-                        else if (childElement.Name == "text")
+
+                        if (childElement.Name == "text")
                         {
                             cell.Text = childElement.InnerText;
                         }
@@ -300,7 +311,8 @@ namespace SpreadsheetEngine
             {
                 this.SetCellValue(sender as TheCell);
             }
-            else if (e.PropertyName.Equals("BGColor"))
+
+            if (e.PropertyName.Equals("BGColor"))
             {
                 this.CellPropertyChanged?.Invoke(sender as TheCell, new PropertyChangedEventArgs("BGColor"));
             }
