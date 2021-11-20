@@ -207,15 +207,27 @@ namespace SpreadsheetEngine
                         if (childElement.Name == "bgcolor")
                         {
                             string color = childElement.InnerText;
+
+                            // if no input in bgcolor tag, continue for next tag
+                            if (color.Length == 0)
+                            {
+                                continue;
+                            }
+
+                            // if such bgcolor not in ARGB format we want its prefix to be 0 until most significant bit - A
+                            while (color.Length < 6)
+                            {
+                                color = "0" + color;
+                            }
+
+                            // if such bgcolor not in ARGB we want its A(alpha component value) to be fully opaque.
                             while (color.Length < 8)
                             {
                                 color = "F" + color;
                             }
 
                             uint newColor = Convert.ToUInt32(color, 16);
-                            // uint newColor = Convert.ToUInt32(childElement.InnerText, 16);
                             cell.BGColor = newColor;
-                            // cell.Text = color;
                         }
 
                         if (childElement.Name == "text")
