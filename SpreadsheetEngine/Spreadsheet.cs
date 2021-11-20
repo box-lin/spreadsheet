@@ -5,6 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using CptS321;
 
 namespace SpreadsheetEngine
@@ -163,6 +168,130 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// Load the xml to spreadsheet from stream.
+        /// </summary>
+        /// <param name="s"> stream. </param>
+        public void LoadFromXml(Stream s)
+        {
+            XmlDocument xDoc = new XmlDocument();
+            xDoc.Load(s);
+
+            // root pick
+            XmlNode root = xDoc.SelectSingleNode("spreadsheet");
+
+            if (root == null)
+            {
+                return;
+            }
+
+            this.undos.Clear();
+            this.redos.Clear();
+            XmlNodeList childList = root.ChildNodes;
+
+            // traverse through cells in spreadsheet.
+            foreach (XmlNode child in childList)
+            {
+                XmlElement element = (XmlElement)child;
+
+                // encounter a cell.
+                if (element.Name == "cell")
+                {
+                    // retrieve the spreadsheet cell.
+                    string cellname = element.GetAttribute("name");
+                    TheCell cell = this.GetCellByName(cellname);
+
+                    // traverse the attributes of a cell --> for cell's text and bgcolors.
+                    foreach (XmlNode cchild in child.ChildNodes)
+                    {
+                        XmlElement childElement = (XmlElement)cchild;
+                        if (childElement.Name == "bgcolor")
+                        {
+                            string color = childElement.InnerText;
+
+                            // if no input in bgcolor tag, continue for next tag
+                            if (color.Length == 0)
+                            {
+                                continue;
+                            }
+
+                            // if such bgcolor not in ARGB format we want its prefix to be 0 until most significant bit - A
+                            while (color.Length < 6)
+                            {
+                                color = "0" + color;
+                            }
+
+                            // if such bgcolor not in ARGB we want its A(alpha component value) to be fully opaque.
+                            while (color.Length < 8)
+                            {
+                                color = "F" + color;
+                            }
+
+                            uint newColor = Convert.ToUInt32(color, 16);
+                            cell.BGColor = newColor;
+                        }
+
+                        if (childElement.Name == "text")
+                        {
+                            cell.Text = childElement.InnerText;
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Spreadsheet save to XML from stream.
+        /// </summary>
+        /// <param name="s"> stream. </param>
+        public void SaveToXML(Stream s)
+        {
+            XmlWriter wr = XmlWriter.Create(s);
+
+            // root
+            wr.WriteStartElement("spreadsheet");
+
+            // refer to our local cell data.
+            foreach (TheCell cell in this.Cells)
+            {
+                // if not default value we need to save info to the XML
+                if (cell.Text != string.Empty || cell.BGColor != 0xFFFFFFFF)
+                {
+                    string cellname = cell.ColumnIndex + (cell.RowIndex + 1).ToString();
+
+                    // second layer by cell.
+                    wr.WriteStartElement("cell");
+                    wr.WriteAttributeString("name", cellname);
+
+                    // write the color first if not default.
+                    if (cell.BGColor != 0xFFFFFFFF)
+                    {
+                        // third layer.
+                        wr.WriteStartElement("bgcolor");
+
+                        // for 16 bits int in string representation.
+                        wr.WriteString(cell.BGColor.ToString("X"));
+                        wr.WriteEndElement();
+                    }
+
+                    if (cell.Text != string.Empty)
+                    {
+                        // third layer.
+                        wr.WriteStartElement("text");
+                        wr.WriteString(cell.Text);
+                        wr.WriteEndElement();
+                    }
+
+                    // end second layer.
+                    wr.WriteEndElement();
+                }
+            }
+
+            // close first layer.
+            wr.WriteEndElement();
+            wr.Close();
+        }
+
+        /// <summary>
         /// Init the 2D cell elements and configure the CellPropertyChange event for each cell in array.
         /// </summary>
         /// <param name="row"> row number. </param>
@@ -194,7 +323,8 @@ namespace SpreadsheetEngine
             {
                 this.SetCellValue(sender as TheCell);
             }
-            else if (e.PropertyName.Equals("BGColor"))
+
+            if (e.PropertyName.Equals("BGColor"))
             {
                 this.CellPropertyChanged?.Invoke(sender as TheCell, new PropertyChangedEventArgs("BGColor"));
             }

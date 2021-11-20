@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using CptS321;
 using SpreadsheetEngine;
@@ -35,13 +36,6 @@ namespace Spreadsheet_Boxiang_Lin
         private void Form1_Load(object sender, EventArgs e)
         {
             this.ResetDataGridView();
-            this.InitColumns('A', 'Z');
-            this.InitRows(1, 50);
-            this.spreadsheet = new Spreadsheet(50, 26);
-            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
-            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
-            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
-            this.SetUndoRedoMeanuVisibilityAndInfo();
         }
 
         /// <summary>
@@ -58,7 +52,8 @@ namespace Spreadsheet_Boxiang_Lin
             {
                 formCell.Value = curCell.Value;
             }
-            else if (e.PropertyName == "BGColor")
+
+            if (e.PropertyName == "BGColor")
             {
                 Color newColor = Color.FromArgb((int)curCell.BGColor);
                 formCell.Style.BackColor = newColor;
@@ -97,7 +92,7 @@ namespace Spreadsheet_Boxiang_Lin
             DataGridViewCell dataCell = this.dataGridView1.Rows[row].Cells[col];
 
             // If new value we type into dataCell different than existing cell text, we want to make update our local cell.
-            if ((dataCell.Value != null && cell.Text != dataCell.Value.ToString()) || dataCell.Value.ToString().StartsWith("="))
+            if ((dataCell.Value != null && cell.Text != dataCell.Value.ToString()) || (dataCell.Value != null && dataCell.Value.ToString().StartsWith("=")))
             {
                 string newValue = dataCell.Value.ToString();
                 TextCommand command = new TextCommand(cell, newValue);
@@ -167,8 +162,16 @@ namespace Spreadsheet_Boxiang_Lin
         /// </summary>
         private void ResetDataGridView()
         {
-            this.dataGridView1.CancelEdit();
             this.dataGridView1.Columns.Clear();
+            this.InitColumns('A', 'Z');
+            this.dataGridView1.Rows.Clear();
+            this.InitRows(1, 50);
+            this.spreadsheet = new Spreadsheet(50, 26);
+            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
+            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
+            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
+            this.SetUndoRedoMeanuVisibilityAndInfo();
+            this.dataGridView1.ClearSelection();
         }
 
         /// <summary>
@@ -252,6 +255,43 @@ namespace Spreadsheet_Boxiang_Lin
             {
                 this.undoToolStripMenuItem.Enabled = true;
                 this.undoToolStripMenuItem.Text = "Undo " + this.spreadsheet.GetUndoCommandInfo();
+            }
+        }
+
+        /// <summary>
+        /// Load XML event.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void LoadToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openDialog = new OpenFileDialog();
+            openDialog.Filter = "XML files | *.xml";
+            if (openDialog.ShowDialog() == DialogResult.OK)
+            {
+                Stream s = openDialog.OpenFile();
+                this.ResetDataGridView();
+                this.spreadsheet.LoadFromXml(s);
+                this.SetUndoRedoMeanuVisibilityAndInfo();
+                s.Close();
+            }
+        }
+
+        /// <summary>
+        /// Save to XML event.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.Filter = "XML files | *.xml";
+
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                Stream s = saveDialog.OpenFile();
+                this.spreadsheet.SaveToXML(s);
+                s.Close();
             }
         }
     }
