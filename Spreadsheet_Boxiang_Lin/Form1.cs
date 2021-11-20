@@ -171,6 +171,7 @@ namespace Spreadsheet_Boxiang_Lin
             this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
             this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
             this.SetUndoRedoMeanuVisibilityAndInfo();
+            this.dataGridView1.ClearSelection();
         }
 
         /// <summary>
