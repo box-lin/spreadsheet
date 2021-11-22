@@ -387,12 +387,12 @@ namespace SpreadsheetEngine
 
                 if (refCell == null)
                 {
-                    currCell.SetValue("Out Of Range");
+                    currCell.SetValue("!(bad reference)");
                     return true;
                 }
                 else if (currCell == refCell)
                 {
-                    currCell.SetValue("Self Reference LATER");
+                    currCell.SetValue("!(self reference)");
                     return true;
                 }
                 else
@@ -420,7 +420,8 @@ namespace SpreadsheetEngine
         {
             try
             {
-                char col = valName[0];
+                // to support lowercase cell name
+                char col = char.ToUpper(valName[0]);
                 string row = valName.Substring(1);
                 int colIndex = col - 'A';
                 int rowIndex = int.Parse(row) - 1;
