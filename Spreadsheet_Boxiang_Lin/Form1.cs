@@ -284,6 +284,15 @@ namespace Spreadsheet_Boxiang_Lin
         /// <param name="e"> event. </param>
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            this.SaveToXML();
+        }
+
+        /// <summary>
+        /// SaveToXML method.
+        /// To use by new spreadsheet message dialog or UI menu button.
+        /// </summary>
+        private void SaveToXML()
+        {
             SaveFileDialog saveDialog = new SaveFileDialog();
             saveDialog.Filter = "XML files | *.xml";
 
@@ -292,6 +301,32 @@ namespace Spreadsheet_Boxiang_Lin
                 Stream s = saveDialog.OpenFile();
                 this.spreadsheet.SaveToXML(s);
                 s.Close();
+            }
+        }
+
+        /// <summary>
+        /// Event handler to support new spreadsheet application.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void NewSpreadsheetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.spreadsheet.IsEmptyUndoStack())
+            {
+                this.ResetDataGridView();
+            }
+            else
+            {
+                DialogResult res = MessageBox.Show("You spreadsheet has been modified. Do you want to save? ", "Notice", MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
+                if ((int)res == 1)
+                {
+                    this.SaveToXML();
+                    this.ResetDataGridView();
+                }
+                else
+                {
+                    this.ResetDataGridView();
+                }
             }
         }
     }
