@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -395,8 +396,29 @@ namespace SpreadsheetEngine
                     currCell.SetValue("!(self reference)");
                     return true;
                 }
+                else if (refCell.Value.Equals("!(bad reference)") || refCell.Value.Equals("!(self reference)") || refCell.Value.Equals("!(circular reference)"))
+                {
+                    if (refCell.Value.Equals("!(circular reference)"))
+                    {
+                        currCell.SetValue("!(circular reference)");
+                        currCell.SubToCellPropertyChange(refCell);
+                        return true;
+                    }
+                    else
+                    {
+                        currCell.SetValue("!(reference to invalid)");
+                        currCell.SubToCellPropertyChange(refCell);
+                        return true;
+                    }
+                }
+                else if (this.BFSforCircular(currCell, refCell))
+                {
+                    currCell.SetValue("!(circular reference)");
+                    return true;
+                }
                 else
                 {
+                    // If all above invalid checkes passed good to get refCell value.
                     double num = 0.0;
                     if (double.TryParse(refCell.Value, out num))
                     {
@@ -431,6 +453,64 @@ namespace SpreadsheetEngine
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Do BFS for all the reference cell layer per layer.
+        /// </summary>
+        /// <param name="curCell"> current cell. </param>
+        /// <param name="refCell"> reference cell. </param>
+        /// <returns> true or false. </returns>
+        private bool BFSforCircular(TheCell curCell, TheCell refCell)
+        {
+            if (refCell.Text.StartsWith("="))
+            {
+                // reference cell's expression tree to get its ref cells in the formula.
+                ExpressionTree referTree = new ExpressionTree(refCell.Text.Substring(1).Replace(" ", string.Empty));
+                Queue<TheCell> q = new Queue<TheCell>();
+                foreach (string item in referTree.GetAllVariableName())
+                {
+                    TheCell refRefCell = this.GetCellByName(item);
+
+                    // prepare the queue then we will need to do some adjacency cell (ref's ref cell) checking.
+                    q.Enqueue(refRefCell);
+                }
+
+                while (q.Count > 0)
+                {
+                    // Go through the current level
+                    int size = q.Count;
+                    for (int i = 0; i < size; i++)
+                    {
+                        TheCell refRefCell = q.Dequeue();
+
+                        // check if the reference cell's references includes current cell, if yes, return true for cirular reference.
+                        if (refRefCell.Equals(curCell))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            // otherwise if referencell is formula based, we need to check the cells in the formula one by one.
+                            if (refRefCell.Text.StartsWith("="))
+                            {
+                                // from formula form the subtree.
+                                ExpressionTree subtree = new ExpressionTree(refRefCell.Text.Substring(1).Replace(" ", string.Empty));
+
+                                // search through the subtree.
+                                foreach (string item in subtree.GetAllVariableName())
+                                {
+                                    // add each referenced cell in the formula into the q for next iteration.
+                                    TheCell subRefCell = this.GetCellByName(item);
+                                    q.Enqueue(subRefCell);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }

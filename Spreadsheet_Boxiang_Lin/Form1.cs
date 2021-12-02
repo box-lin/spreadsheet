@@ -289,7 +289,7 @@ namespace Spreadsheet_Boxiang_Lin
 
         /// <summary>
         /// SaveToXML method.
-        /// To use by new spreadsheet message dialog or UI menu button.
+        /// To use by new spreadsheet message dialog and UI menu button.
         /// </summary>
         private void SaveToXML()
         {
