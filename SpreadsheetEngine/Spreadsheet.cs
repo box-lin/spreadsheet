@@ -360,15 +360,21 @@ namespace SpreadsheetEngine
                 if (!error)
                 {
                     newValue = exp.Evaluate().ToString();
+                    cell.SetValue(newValue);
+                    this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
                 }
                 else
                 {
                     newValue = cell.Value;
+                    cell.SetValue(newValue);
+                    this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
                 }
             }
-
-            cell.SetValue(newValue);
-            this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
+            else
+            {
+                cell.SetValue(newValue);
+                this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
+            }   
         }
 
         /// <summary>
@@ -381,6 +387,7 @@ namespace SpreadsheetEngine
         {
             // all variable names captured during the construction of expression tree.
             HashSet<string> variableNames = exp.GetAllVariableName();
+
             foreach (string cellname in variableNames)
             {
                 // Get the reference cell.
@@ -391,11 +398,14 @@ namespace SpreadsheetEngine
                     currCell.SetValue("!(bad reference)");
                     return true;
                 }
+
+                // check if there is self reference issue.
                 else if (currCell == refCell)
                 {
                     currCell.SetValue("!(self reference)");
                     return true;
                 }
+                /*
                 else if (refCell.Value.Equals("!(bad reference)") || refCell.Value.Equals("!(self reference)") || refCell.Value.Equals("!(circular reference)"))
                 {
                     if (refCell.Value.Equals("!(circular reference)"))
@@ -410,14 +420,34 @@ namespace SpreadsheetEngine
                         currCell.SubToCellPropertyChange(refCell);
                         return true;
                     }
-                }
-                else if (this.BFSforCircular(currCell, refCell))
+                }*/
+                else if (this.IsCircular(currCell, refCell))
                 {
                     currCell.SetValue("!(circular reference)");
                     return true;
                 }
                 else
                 {
+                    // Set variables in expression tree.
+                    double val;
+                    if (string.IsNullOrEmpty(refCell.Value))
+                    {
+                        exp.SetVariable(cellname, 0);
+                        currCell.SubToCellPropertyChange(refCell);
+                    }
+                    else if (!double.TryParse(refCell.Value, out val))
+                    {
+                        exp.SetVariable(cellname, 0);
+                        currCell.SubToCellPropertyChange(refCell);
+                    }
+                    else
+                    {
+                        exp.SetVariable(cellname, val);
+                        currCell.SubToCellPropertyChange(refCell);
+                    }
+
+
+                    /*
                     // If all above invalid checkes passed good to get refCell value.
                     double num = 0.0;
                     if (double.TryParse(refCell.Value, out num))
@@ -426,7 +456,7 @@ namespace SpreadsheetEngine
                     }
 
                     exp.SetVariable(cellname, num);
-                    currCell.SubToCellPropertyChange(refCell);
+                    currCell.SubToCellPropertyChange(refCell);*/
                 }
             }
 
@@ -456,60 +486,30 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
-        /// Do BFS for all the reference cell layer per layer.
+        /// Using depth first search to search through one neighbour all the way down.
         /// </summary>
-        /// <param name="curCell"> current cell. </param>
-        /// <param name="refCell"> reference cell. </param>
+        /// <param name="cell"> current cell. </param>
+        /// <param name="refcell"> reference cell (neighbour) </param>
         /// <returns> true or false. </returns>
-        private bool BFSforCircular(TheCell curCell, TheCell refCell)
+        private bool IsCircular(TheCell cell, TheCell refcell)
         {
-            if (refCell.Text.StartsWith("="))
+            // base case, if two referencing address same, circular found return true.
+            if (cell == refcell)
             {
-                // reference cell's expression tree to get its ref cells in the formula.
-                ExpressionTree referTree = new ExpressionTree(refCell.Text.Substring(1).Replace(" ", string.Empty));
-                Queue<TheCell> q = new Queue<TheCell>();
-                foreach (string item in referTree.GetAllVariableName())
-                {
-                    TheCell refRefCell = this.GetCellByName(item);
-
-                    // prepare the queue then we will need to do some adjacency cell (ref's ref cell) checking.
-                    q.Enqueue(refRefCell);
-                }
-
-                while (q.Count > 0)
-                {
-                    // Go through the current level
-                    int size = q.Count;
-                    for (int i = 0; i < size; i++)
-                    {
-                        TheCell refRefCell = q.Dequeue();
-
-                        // check if the reference cell's references includes current cell, if yes, return true for cirular reference.
-                        if (refRefCell.Equals(curCell))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            // otherwise if referencell is formula based, we need to check the cells in the formula one by one.
-                            if (refRefCell.Text.StartsWith("="))
-                            {
-                                // from formula form the subtree.
-                                ExpressionTree subtree = new ExpressionTree(refRefCell.Text.Substring(1).Replace(" ", string.Empty));
-
-                                // search through the subtree.
-                                foreach (string item in subtree.GetAllVariableName())
-                                {
-                                    // add each referenced cell in the formula into the q for next iteration.
-                                    TheCell subRefCell = this.GetCellByName(item);
-                                    q.Enqueue(subRefCell);
-                                }
-                            }
-                        }
-                    }
-                }
+                return true;
             }
 
+            if (refcell.Text.StartsWith("="))
+            {
+                HashSet<string> curRefVariables = new ExpressionTree(refcell.Text.Substring(1).Replace(" ", string.Empty)).GetAllVariableName();
+                foreach (string variable in curRefVariables)
+                {
+                    // depth first search.
+                    TheCell cellVariable = this.GetCellByName(variable);
+                    return this.IsCircular(cell, cellVariable);
+                }
+            }
+            // none true return then it is false. no circular.
             return false;
         }
     }
