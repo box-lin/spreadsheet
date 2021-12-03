@@ -39,6 +39,7 @@ namespace CptS321
 
         private readonly int rowIndex;
         private readonly char columnIndex;
+        private readonly string name;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Cell"/> class.
@@ -52,6 +53,7 @@ namespace CptS321
             this.rowIndex = rowIndex;
             this.columnIndex = columnIndex;
             this.bgColor = 0xFFFFFFFF;
+            this.name = columnIndex + (rowIndex + 1).ToString();
         }
 
         /// <inheritdoc/>
@@ -133,6 +135,8 @@ namespace CptS321
                 return this.value;
             }
         }
+
+        public string Name { get { return this.name; } }
 
         /// <summary>
         /// Changes string field value to newValue.

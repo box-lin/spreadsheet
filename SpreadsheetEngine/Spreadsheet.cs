@@ -31,6 +31,11 @@ namespace SpreadsheetEngine
         private int rowCount;
 
         /// <summary>
+        /// dependencies dictionary to help get track of variable cells.
+        /// </summary>
+        private Dictionary<string, HashSet<string>> dependencies;
+
+        /// <summary>
         /// Undo stack to store specic command that implements the ICommand Interface.
         /// </summary>
         private Stack<ICommand> undos;
@@ -52,6 +57,7 @@ namespace SpreadsheetEngine
             this.rowCount = row;
             this.undos = new Stack<ICommand>();
             this.redos = new Stack<ICommand>();
+            this.dependencies = new Dictionary<string, HashSet<string>>();
         }
 
         /// <summary>
@@ -308,7 +314,6 @@ namespace SpreadsheetEngine
                     TheCell cell = new TheCell(i, colIndex);
                     this.Cells[i, j] = cell;
                     cell.PropertyChanged += this.OnCellPropertyChanged;
-                    cell.RefCellValueChanged += this.OnRefCellValueChanged;
                 }
             }
         }
@@ -320,146 +325,160 @@ namespace SpreadsheetEngine
         /// <param name="e"> event.</param>
         private void OnCellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("Text"))
+            if (e.PropertyName == "Text")
             {
-                this.SetCellValue(sender as TheCell);
-            }
+                TheCell tmpCell = sender as TheCell;
+                this.RemoveDependencies(tmpCell.Name);
 
-            if (e.PropertyName.Equals("BGColor"))
+                if (tmpCell.Text != string.Empty && tmpCell.Text[0] == '=')
+                {
+                    ExpressionTree exp = new ExpressionTree(tmpCell.Text.Substring(1));
+                    this.BuildDependencies(tmpCell.Name, exp.GetAllVariableName());
+                }
+
+                this.Evaluate(sender as TheCell);
+            }
+            else if (e.PropertyName == "BGColor")
             {
-                this.CellPropertyChanged?.Invoke(sender as TheCell, new PropertyChangedEventArgs("BGColor"));
+                this.CellPropertyChanged?.Invoke(sender, new PropertyChangedEventArgs("BGColor"));
             }
         }
 
         /// <summary>
-        /// Reference cell event listener. Update value as ref cell property changes.
+        /// Every time the cell text event triggered, we will have all cell slot of dependencies that contains it.
         /// </summary>
-        /// <param name="sender">Ref cell.</param>
-        /// <param name="e">Event.</param>
-        private void OnRefCellValueChanged(object sender, EventArgs e)
+        /// <param name="cellName"> the cell that we are changing. </param>
+        private void RemoveDependencies(string cellName)
         {
-            this.SetCellValue(sender as TheCell);
+            foreach (string key in this.dependencies.Keys)
+            {
+                if (this.dependencies[key].Contains(cellName))
+                {
+                    this.dependencies[key].Remove(cellName);
+                }
+            }
         }
 
         /// <summary>
-        /// <Helper> Set the cell value and if do the expression computation. </Helper>
-        /// Case 1: If start with =, use expression tree to evaluate the result.
-        /// Case 2: Not start with =, just set text to value.
+        /// Build the current cell to dependet on all variables (reference cell) in its formula.
         /// </summary>
-        /// <param name="cell">Spreadsheet cell.</param>
-        private void SetCellValue(TheCell cell)
+        /// <param name="cellName"> cell editing. </param>
+        /// <param name="variablesUsed"> variables filter from the formula. </param>
+        private void BuildDependencies(string cellName, HashSet<string> variablesUsed)
         {
-            string newValue = cell.Text;
-
-            if (newValue.StartsWith("="))
+            foreach (string v in variablesUsed)
             {
-                // remove = and whitespaces
-                string expression = cell.Text.Substring(1).Replace(" ", string.Empty);
-                ExpressionTree exp = new ExpressionTree(expression);
-                bool error = this.SetVariable(exp, cell);
-                if (!error)
+                if (this.dependencies.ContainsKey(v) == false)
                 {
-                    newValue = exp.Evaluate().ToString();
-                    cell.SetValue(newValue);
-                    this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
+                    this.dependencies[v] = new HashSet<string>();
                 }
-                else
+
+                this.dependencies[v].Add(cellName);
+            }
+        }
+
+        /// <summary>
+        /// Evaluating the current editing cell. 1. With formula or 2. just plain text.
+        /// </summary>
+        /// <param name="cell"> current editing cell.</param>
+        private void Evaluate(TheCell cell)
+        {
+
+            // null or empty
+            if (string.IsNullOrEmpty(cell.Text))
+            {
+                cell.SetValue(string.Empty);
+                this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
+            }
+
+            // if it is an exp
+            else if (cell.Text[0] == '=' && cell.Text.Length >= 2)
+            {
+                bool hasError = this.EvaluateHelper(cell);
+                if (hasError)
                 {
-                    newValue = cell.Value;
-                    cell.SetValue(newValue);
-                    this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
+                    return;
                 }
             }
+
+            // others being text
             else
             {
-                cell.SetValue(newValue);
+                cell.SetValue(cell.Text);
                 this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
-            }   
+            }
+
+            if (this.dependencies.ContainsKey(cell.Name))
+            {
+                foreach (var dependentCell in this.dependencies[cell.Name])
+                {
+                    this.Evaluate(this.GetCellByName(dependentCell));
+                }
+            }
         }
 
         /// <summary>
-        /// Variable in the Expression tree set with value according to the ref cell.
+        /// A Helper method of evaluate for formulas. Check for 1. self reference, 2. bad reference, 3. circular reference, 
+        /// and 4. assign value to variables.
         /// </summary>
-        /// <param name="exp"> ExpressionTree. </param>
-        /// <param name="currCell"> current cell.</param>
-        /// <returns> error or no error. </returns>
-        private bool SetVariable(ExpressionTree exp, TheCell currCell)
+        /// <param name="cell"> current editing cell. </param>
+        /// <returns> true or false. </returns>
+        private bool EvaluateHelper(TheCell cell)
         {
-            // all variable names captured during the construction of expression tree.
-            HashSet<string> variableNames = exp.GetAllVariableName();
+            ExpressionTree exptree = new ExpressionTree(cell.Text.Substring(1));
+            HashSet<string> variables = exptree.GetAllVariableName();
 
-            foreach (string cellname in variableNames)
+            foreach (string variableName in variables)
             {
-                // Get the reference cell.
-                TheCell refCell = this.GetCellByName(cellname);
-
-                if (refCell == null)
+                // bad reference
+                if (this.GetCellByName(variableName) == null)
                 {
-                    currCell.SetValue("!(bad reference)");
+                    cell.SetValue("!(Bad Reference)");
+                    this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
                     return true;
                 }
 
-                // check if there is self reference issue.
-                else if (currCell == refCell)
+                // self reference
+                if (variableName == cell.Name)
                 {
-                    currCell.SetValue("!(self reference)");
+                    cell.SetValue("!(Self Reference)");
+                    this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
                     return true;
                 }
-                /*
-                else if (refCell.Value.Equals("!(bad reference)") || refCell.Value.Equals("!(self reference)") || refCell.Value.Equals("!(circular reference)"))
+
+                // circular reference.
+                if (this.IsCircular(cell, variableName))
                 {
-                    if (refCell.Value.Equals("!(circular reference)"))
-                    {
-                        currCell.SetValue("!(circular reference)");
-                        currCell.SubToCellPropertyChange(refCell);
-                        return true;
-                    }
-                    else
-                    {
-                        currCell.SetValue("!(reference to invalid)");
-                        currCell.SubToCellPropertyChange(refCell);
-                        return true;
-                    }
-                }*/
-                else if (this.IsCircular(currCell, refCell))
-                {
-                    currCell.SetValue("!(circular reference)");
+                    cell.SetValue("!(Circular Reference)");
+                    this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
                     return true;
-                }
-                else
-                {
-                    // Set variables in expression tree.
-                    double val;
-                    if (string.IsNullOrEmpty(refCell.Value))
-                    {
-                        exp.SetVariable(cellname, 0);
-                        currCell.SubToCellPropertyChange(refCell);
-                    }
-                    else if (!double.TryParse(refCell.Value, out val))
-                    {
-                        exp.SetVariable(cellname, 0);
-                        currCell.SubToCellPropertyChange(refCell);
-                    }
-                    else
-                    {
-                        exp.SetVariable(cellname, val);
-                        currCell.SubToCellPropertyChange(refCell);
-                    }
-
-
-                    /*
-                    // If all above invalid checkes passed good to get refCell value.
-                    double num = 0.0;
-                    if (double.TryParse(refCell.Value, out num))
-                    {
-                        num = double.Parse(refCell.Value);
-                    }
-
-                    exp.SetVariable(cellname, num);
-                    currCell.SubToCellPropertyChange(refCell);*/
                 }
             }
 
+            // if we reach to this point that means no error found yet. we can assign value to variable for this operation.
+            foreach (string variableName in variables)
+            {
+                // assign double value to variables.
+                TheCell variableCell = this.GetCellByName(variableName);
+                double value;
+
+                if (string.IsNullOrEmpty(variableCell.Value))
+                {
+                    exptree.SetVariable(variableCell.Name, 0);
+                }
+                else if (!double.TryParse(variableCell.Value, out value))
+                {
+                    exptree.SetVariable(variableName, 0);
+                }
+                else
+                {
+                    exptree.SetVariable(variableName, value);
+                }
+            }
+
+            // then we will evaluate the expression tree.
+            cell.SetValue(exptree.Evaluate().ToString());
+            this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
             return false;
         }
 
@@ -473,7 +492,7 @@ namespace SpreadsheetEngine
             try
             {
                 // to support lowercase cell name
-                char col = char.ToUpper(valName[0]);
+                char col = valName[0];
                 string row = valName.Substring(1);
                 int colIndex = col - 'A';
                 int rowIndex = int.Parse(row) - 1;
@@ -486,30 +505,53 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
-        /// Using depth first search to search through one neighbour all the way down.
+        /// Check the current variables, then search through the dependent cells from dependency dictionary.
         /// </summary>
-        /// <param name="cell"> current cell. </param>
-        /// <param name="refcell"> reference cell (neighbour) </param>
-        /// <returns> true or false. </returns>
-        private bool IsCircular(TheCell cell, TheCell refcell)
+        /// <param name="cell"> cell editing. </param>
+        /// <param name="varName"> one variable cell name. </param>
+        /// <returns> true or false.  </returns>
+        private bool IsCircular(TheCell cell, string varName)
         {
-            // base case, if two referencing address same, circular found return true.
-            if (cell == refcell)
+            if (varName == cell.Name)
             {
                 return true;
             }
 
-            if (refcell.Text.StartsWith("="))
+            if (!this.dependencies.ContainsKey(cell.Name))
             {
-                HashSet<string> curRefVariables = new ExpressionTree(refcell.Text.Substring(1).Replace(" ", string.Empty)).GetAllVariableName();
-                foreach (string variable in curRefVariables)
+                return false;
+            }
+
+            // if we at this point means there is a dependency slot our current cell compose of.
+            // we have to check its all dependents (values in a dict) will the deepest and fartest distance.
+            string curname = cell.Name;
+            return this.Dfs(curname, varName);
+        }
+
+        /// <summary>
+        /// Depth first serch helper.
+        /// Search over the dependent's dependent's dependent .....
+        /// </summary>
+        /// <param name="curname"> curcell (change-able by recursion) </param>
+        /// <param name="vname"> variable cell name.</param>
+        /// <returns> true or false. </returns>
+        private bool Dfs(string curname, string vname)
+        {
+            if (vname == curname)
+            {
+                return true;
+            }
+
+            // need to visit each dependents.
+            foreach (string dname in this.dependencies[curname])
+            {
+                if (this.dependencies.ContainsKey(dname))
                 {
-                    // depth first search.
-                    TheCell cellVariable = this.GetCellByName(variable);
-                    return this.IsCircular(cell, cellVariable);
+                    // search dependent's dependent's dependent..
+                    return this.Dfs(dname, vname);
                 }
             }
-            // none true return then it is false. no circular.
+
             return false;
         }
     }

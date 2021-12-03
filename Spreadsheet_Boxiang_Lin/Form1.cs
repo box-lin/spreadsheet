@@ -163,8 +163,8 @@ namespace Spreadsheet_Boxiang_Lin
         private void ResetDataGridView()
         {
             this.dataGridView1.Columns.Clear();
-            this.InitColumns('A', 'Z');
             this.dataGridView1.Rows.Clear();
+            this.InitColumns('A', 'Z');
             this.InitRows(1, 50);
             this.spreadsheet = new Spreadsheet(50, 26);
             this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
