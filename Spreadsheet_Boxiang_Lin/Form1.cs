@@ -35,7 +35,16 @@ namespace Spreadsheet_Boxiang_Lin
         /// <param name="e"> Event. </param>
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.ResetDataGridView();
+            this.dataGridView1.Columns.Clear();
+            this.dataGridView1.Rows.Clear();
+            this.InitColumns('A', 'Z');
+            this.InitRows(1, 50);
+            this.spreadsheet = new Spreadsheet(50, 26);
+            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
+            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
+            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
+            this.SetUndoRedoMeanuVisibilityAndInfo();
+            this.dataGridView1.ClearSelection();
         }
 
         /// <summary>
@@ -157,19 +166,11 @@ namespace Spreadsheet_Boxiang_Lin
         }
 
         /// <summary>
-        /// A method that to reset the rows and columns of DataGridView.
-        /// (Refer to .NET docs.)
+        /// RefactorySpreadsheet.
         /// </summary>
-        private void ResetDataGridView()
+        private void RefactorySpreadsheet()
         {
-            this.dataGridView1.Columns.Clear();
-            this.dataGridView1.Rows.Clear();
-            this.InitColumns('A', 'Z');
-            this.InitRows(1, 50);
-            this.spreadsheet = new Spreadsheet(50, 26);
-            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
-            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
-            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
+            this.spreadsheet.RefactorySpreadsheet();
             this.SetUndoRedoMeanuVisibilityAndInfo();
             this.dataGridView1.ClearSelection();
         }
@@ -270,7 +271,7 @@ namespace Spreadsheet_Boxiang_Lin
             if (openDialog.ShowDialog() == DialogResult.OK)
             {
                 Stream s = openDialog.OpenFile();
-                this.ResetDataGridView();
+                this.RefactorySpreadsheet();
                 this.spreadsheet.LoadFromXml(s);
                 this.SetUndoRedoMeanuVisibilityAndInfo();
                 s.Close();
@@ -313,7 +314,7 @@ namespace Spreadsheet_Boxiang_Lin
         {
             if (this.spreadsheet.IsEmptyUndoStack())
             {
-                this.ResetDataGridView();
+                this.RefactorySpreadsheet();
             }
             else
             {
@@ -321,11 +322,11 @@ namespace Spreadsheet_Boxiang_Lin
                 if ((int)res == 1)
                 {
                     this.SaveToXML();
-                    this.ResetDataGridView();
+                    this.RefactorySpreadsheet();
                 }
                 else
                 {
-                    this.ResetDataGridView();
+                    this.RefactorySpreadsheet();
                 }
             }
         }

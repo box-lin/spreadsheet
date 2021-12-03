@@ -136,7 +136,16 @@ namespace CptS321
             }
         }
 
-        public string Name { get { return this.name; } }
+        /// <summary>
+        /// Gets get the cell's name, in a format [char][int].
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+        }
 
         /// <summary>
         /// Changes string field value to newValue.

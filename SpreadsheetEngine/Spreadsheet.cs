@@ -299,6 +299,27 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
+        /// Refactory the spreadsheet cells.
+        /// </summary>
+        public void RefactorySpreadsheet()
+        {
+            // all cells goes to default values.
+            for (int i = 0; i < this.RowCount; i++)
+            {
+                for (int j = 0; j < this.ColumnCount; j++)
+                {
+                    this.Cells[i, j].Text = string.Empty;
+                    this.Cells[i, j].SetValue(string.Empty);
+                    this.Cells[i, j].BGColor = 0xFFFFFFFF;
+                }
+            }
+
+            // all undo redo goes to empty.
+            this.undos.Clear();
+            this.redos.Clear();
+        }
+
+        /// <summary>
         /// Init the 2D cell elements and configure the CellPropertyChange event for each cell in array.
         /// </summary>
         /// <param name="row"> row number. </param>
@@ -327,13 +348,13 @@ namespace SpreadsheetEngine
         {
             if (e.PropertyName == "Text")
             {
-                TheCell tmpCell = sender as TheCell;
-                this.RemoveDependencies(tmpCell.Name);
+                TheCell curCell = sender as TheCell;
+                this.RemoveDependencies(curCell.Name);
 
-                if (tmpCell.Text != string.Empty && tmpCell.Text[0] == '=')
+                if (curCell.Text != string.Empty && curCell.Text[0] == '=')
                 {
-                    ExpressionTree exp = new ExpressionTree(tmpCell.Text.Substring(1));
-                    this.BuildDependencies(tmpCell.Name, exp.GetAllVariableName());
+                    ExpressionTree exp = new ExpressionTree(curCell.Text.Substring(1).Replace(" ", string.Empty));
+                    this.BuildDependencies(curCell.Name, exp.GetAllVariableName());
                 }
 
                 this.Evaluate(sender as TheCell);
@@ -383,7 +404,6 @@ namespace SpreadsheetEngine
         /// <param name="cell"> current editing cell.</param>
         private void Evaluate(TheCell cell)
         {
-
             // null or empty
             if (string.IsNullOrEmpty(cell.Text))
             {
@@ -418,7 +438,7 @@ namespace SpreadsheetEngine
         }
 
         /// <summary>
-        /// A Helper method of evaluate for formulas. Check for 1. self reference, 2. bad reference, 3. circular reference, 
+        /// A Helper method of evaluate for formulas. Check for 1. self reference, 2. bad reference, 3. circular reference.
         /// and 4. assign value to variables.
         /// </summary>
         /// <param name="cell"> current editing cell. </param>
@@ -532,7 +552,7 @@ namespace SpreadsheetEngine
         /// Depth first serch helper.
         /// Search over the dependent's dependent's dependent .....
         /// </summary>
-        /// <param name="curname"> curcell (change-able by recursion) </param>
+        /// <param name="curname"> curcell (change-able by recursion). </param>
         /// <param name="vname"> variable cell name.</param>
         /// <returns> true or false. </returns>
         private bool Dfs(string curname, string vname)

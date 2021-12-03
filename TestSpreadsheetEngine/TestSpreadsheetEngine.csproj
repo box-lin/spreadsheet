@@ -45,6 +45,7 @@
     <Compile Include="TestCell.cs" />
     <Compile Include="TestColorCommand.cs" />
     <Compile Include="TestExpressionTree.cs" />
+    <Compile Include="TestInvalidReference.cs" />
     <Compile Include="TestOpNodeFactory.cs" />
     <Compile Include="TestSpreadsheet.cs" />
     <Compile Include="TestTextCommand.cs" />
