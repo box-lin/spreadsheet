@@ -317,6 +317,9 @@ namespace SpreadsheetEngine
             // all undo redo goes to empty.
             this.undos.Clear();
             this.redos.Clear();
+
+            // dependency clear.
+            this.dependencies.Clear();
         }
 
         /// <summary>
@@ -465,8 +468,11 @@ namespace SpreadsheetEngine
                     this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
                     return true;
                 }
+            }
 
-                // circular reference.
+            // show bad and self reference for user to fix first, then check for the circular reference.
+            foreach (string variableName in variables)
+            {
                 if (this.IsCircular(cell, variableName))
                 {
                     cell.SetValue("!(Circular Reference)");
@@ -511,7 +517,6 @@ namespace SpreadsheetEngine
         {
             try
             {
-                // to support lowercase cell name
                 char col = valName[0];
                 string row = valName.Substring(1);
                 int colIndex = col - 'A';
