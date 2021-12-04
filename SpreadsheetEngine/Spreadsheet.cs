@@ -414,7 +414,7 @@ namespace SpreadsheetEngine
                 this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
             }
 
-            // if it is an exp
+            // apply formula 
             else if (cell.Text[0] == '=' && cell.Text.Length >= 2)
             {
                 bool hasError = this.EvaluateHelper(cell);
@@ -424,13 +424,14 @@ namespace SpreadsheetEngine
                 }
             }
 
-            // others being text
+            // just simple text change
             else
             {
                 cell.SetValue(cell.Text);
                 this.CellPropertyChanged?.Invoke(cell, new PropertyChangedEventArgs("Value"));
             }
 
+            // recursively all evaluate all dependents.
             if (this.dependencies.ContainsKey(cell.Name))
             {
                 foreach (var dependentCell in this.dependencies[cell.Name])
