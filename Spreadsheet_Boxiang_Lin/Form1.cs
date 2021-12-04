@@ -35,7 +35,16 @@ namespace Spreadsheet_Boxiang_Lin
         /// <param name="e"> Event. </param>
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.ResetDataGridView();
+            this.dataGridView1.Columns.Clear();
+            this.dataGridView1.Rows.Clear();
+            this.InitColumns('A', 'Z');
+            this.InitRows(1, 50);
+            this.spreadsheet = new Spreadsheet(50, 26);
+            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
+            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
+            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
+            this.SetUndoRedoMeanuVisibilityAndInfo();
+            this.dataGridView1.ClearSelection();
         }
 
         /// <summary>
@@ -157,19 +166,11 @@ namespace Spreadsheet_Boxiang_Lin
         }
 
         /// <summary>
-        /// A method that to reset the rows and columns of DataGridView.
-        /// (Refer to .NET docs.)
+        /// RefactorySpreadsheet.
         /// </summary>
-        private void ResetDataGridView()
+        private void RefactorySpreadsheet()
         {
-            this.dataGridView1.Columns.Clear();
-            this.InitColumns('A', 'Z');
-            this.dataGridView1.Rows.Clear();
-            this.InitRows(1, 50);
-            this.spreadsheet = new Spreadsheet(50, 26);
-            this.spreadsheet.CellPropertyChanged += this.OnCellPropertyChanged;
-            this.dataGridView1.CellBeginEdit += this.DataGridView1_CellBeginEdit;
-            this.dataGridView1.CellEndEdit += this.DataGridView1_CellEndEdit;
+            this.spreadsheet.RefactorySpreadsheet();
             this.SetUndoRedoMeanuVisibilityAndInfo();
             this.dataGridView1.ClearSelection();
         }
@@ -270,7 +271,7 @@ namespace Spreadsheet_Boxiang_Lin
             if (openDialog.ShowDialog() == DialogResult.OK)
             {
                 Stream s = openDialog.OpenFile();
-                this.ResetDataGridView();
+                this.RefactorySpreadsheet();
                 this.spreadsheet.LoadFromXml(s);
                 this.SetUndoRedoMeanuVisibilityAndInfo();
                 s.Close();
@@ -284,6 +285,15 @@ namespace Spreadsheet_Boxiang_Lin
         /// <param name="e"> event. </param>
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            this.SaveToXML();
+        }
+
+        /// <summary>
+        /// SaveToXML method.
+        /// To use by new spreadsheet message dialog and UI menu button.
+        /// </summary>
+        private void SaveToXML()
+        {
             SaveFileDialog saveDialog = new SaveFileDialog();
             saveDialog.Filter = "XML files | *.xml";
 
@@ -292,6 +302,32 @@ namespace Spreadsheet_Boxiang_Lin
                 Stream s = saveDialog.OpenFile();
                 this.spreadsheet.SaveToXML(s);
                 s.Close();
+            }
+        }
+
+        /// <summary>
+        /// Event handler to support new spreadsheet application.
+        /// </summary>
+        /// <param name="sender"> object. </param>
+        /// <param name="e"> event. </param>
+        private void NewSpreadsheetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.spreadsheet.IsEmptyUndoStack())
+            {
+                this.RefactorySpreadsheet();
+            }
+            else
+            {
+                DialogResult res = MessageBox.Show("You spreadsheet has been modified. Do you want to save? ", "Notice", MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
+                if ((int)res == 1)
+                {
+                    this.SaveToXML();
+                    this.RefactorySpreadsheet();
+                }
+                else
+                {
+                    this.RefactorySpreadsheet();
+                }
             }
         }
     }

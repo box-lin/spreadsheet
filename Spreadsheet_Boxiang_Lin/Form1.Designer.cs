@@ -43,6 +43,7 @@ namespace Spreadsheet_Boxiang_Lin
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeTheColorForAllSelectedCellsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newSpreadsheetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -103,10 +104,11 @@ namespace Spreadsheet_Boxiang_Lin
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newSpreadsheetToolStripMenuItem,
             this.loadToolStripMenuItem1,
             this.saveToolStripMenuItem});
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(122, 21);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(39, 21);
             this.loadToolStripMenuItem.Text = "File";
             // 
             // loadToolStripMenuItem1
@@ -161,6 +163,13 @@ namespace Spreadsheet_Boxiang_Lin
             this.changeTheColorForAllSelectedCellsToolStripMenuItem.Text = "Change the color for all selected cells";
             this.changeTheColorForAllSelectedCellsToolStripMenuItem.Click += new System.EventHandler(this.ChangeTheColorForAllSelectedCellsToolStripMenuItem_Click);
             // 
+            // newSpreadsheetToolStripMenuItem
+            // 
+            this.newSpreadsheetToolStripMenuItem.Name = "newSpreadsheetToolStripMenuItem";
+            this.newSpreadsheetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newSpreadsheetToolStripMenuItem.Text = "New Spreadsheet";
+            this.newSpreadsheetToolStripMenuItem.Click += new System.EventHandler(this.NewSpreadsheetToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -197,6 +206,7 @@ namespace Spreadsheet_Boxiang_Lin
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newSpreadsheetToolStripMenuItem;
     }
 }
 
