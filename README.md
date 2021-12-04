@@ -1,5 +1,7 @@
-# CptS321-HWs​
+# OPP in C#	
 
-WSU ID: 011601661
+Desktop applications:
 
-Name: Boxiang Lin
+- Notepad application.
+- Spreadsheet application.
+
