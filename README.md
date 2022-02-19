@@ -1,7 +1,19 @@
-# OPP in C#	
+# SpreadSheet Application (C# OOP)
 
-Desktop applications:
+This application simulates the primary functionalities of Microsoft Excel including `Formula Support`, `Load XML`, `Save to XML`, `Redo & Undo Operations`,  and `Background Color Change`.
 
-- Notepad application.
-- Spreadsheet application.
+**Requirement**
 
+`C# (.Net Winform)`
+
+
+
+**Run**
+
+`Build and run through VS` or other IDEs
+
+
+
+**DEMO**
+
+![](C:\Users\boxiang\Desktop\GithubRepo\OOP-Projects\Demo\1.png)
