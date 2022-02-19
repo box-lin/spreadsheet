@@ -16,4 +16,4 @@ This application simulates the primary functionalities of Microsoft Excel includ
 
 **DEMO**
 
-![](C:\Users\boxiang\Desktop\GithubRepo\OOP-Projects\Demo\1.png)
+![](Demo/1.png)
